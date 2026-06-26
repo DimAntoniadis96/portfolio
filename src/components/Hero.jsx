@@ -67,17 +67,31 @@ export default function Hero() {
 
           {/* Right: Photo */}
           <div className="hero-photo-wrapper">
-            <div className="hero-photo-card">
-              <img
-                src="/photo-me.jpg"
-                alt="Dimitrios Antoniadis"
-                className="hero-photo"
-                loading="eager"
-                fetchpriority="high"
-              />
-              <div className="hero-photo-badge">
-                <span className="status-dot" />
-                Available for work
+            <div className="hero-photo-card flip-container">
+              <div className="flipper">
+                {/* Front: Photo */}
+                <div className="front">
+                  <div className="photo-tint"></div>
+                  <img
+                    src="/photo_me.jpg"
+                    alt="Dimitrios Antoniadis"
+                    className="hero-photo"
+                    loading="eager"
+                    fetchpriority="high"
+                  />
+                </div>
+
+                {/* Back: Download CV */}
+                <div className="back">
+                  <a href="/Dimitrios_Antoniadis_CV.pdf" className="cv-download-content" download="Dimitrios_Antoniadis_CV.pdf">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="download-icon">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Download my CV</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
