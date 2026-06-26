@@ -77,7 +77,7 @@ export default function Hero() {
                     alt="Dimitrios Antoniadis"
                     className="hero-photo"
                     loading="eager"
-                    fetchpriority="high"
+                    fetchPriority="high"
                   />
                 </div>
 

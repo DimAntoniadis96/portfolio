@@ -24,3 +24,5 @@ export function useFadeIn(threshold = 0.15) {
 
   return { ref, isVisible };
 }
+
+
