@@ -1,0 +1,42 @@
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+  padding: 60px 0 40px;
+  border-top: 1px solid var(--border-color);
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.footer-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-copy {
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+}
+
+.footer-copy a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.footer-copy a:hover {
+  text-decoration: underline;
+}

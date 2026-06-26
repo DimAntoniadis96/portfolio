@@ -1,0 +1,315 @@
+/* ============================================
+   DESIGN SYSTEM — Portfolio
+   Black, White & Baby Blue
+   ============================================ */
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---------- Theme Variables ---------- */
+:root {
+  /* Typography */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --section-padding: 120px 0;
+  --container-width: 1200px;
+  --container-padding: 0 clamp(20px, 5vw, 80px);
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+/* ---------- Dark Theme (default) ---------- */
+html.dark {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #111111;
+  --bg-card: rgba(10, 10, 10, 0.6);
+  --bg-card-hover: rgba(18, 18, 18, 0.8);
+  --bg-nav: rgba(5, 5, 5, 0.8);
+
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #666666;
+  --text-heading: #ffffff;
+
+  --accent-primary: #89CFF0;
+  --accent-secondary: #a8dcf5;
+  --accent-gradient: linear-gradient(135deg, #89CFF0 0%, #a8dcf5 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #a8dcf5 0%, #c0e8fa 100%);
+  --accent-glow: rgba(137, 207, 240, 0.08);
+  --accent-glow-strong: rgba(137, 207, 240, 0.15);
+
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-color-hover: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(137, 207, 240, 0.25);
+
+  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: 0 8px 40px rgba(137, 207, 240, 0.1);
+
+  --glass-blur: blur(20px);
+  --glass-border: 1px solid var(--border-color);
+
+  color-scheme: dark;
+}
+
+/* ---------- Light Theme ---------- */
+html.light {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eeeeee;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-nav: rgba(255, 255, 255, 0.85);
+
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-tertiary: #888888;
+  --text-heading: #000000;
+
+  --accent-primary: #4da8da;
+  --accent-secondary: #3a8fbf;
+  --accent-gradient: linear-gradient(135deg, #4da8da 0%, #3a8fbf 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #5bb5e3 0%, #4da8da 100%);
+  --accent-glow: rgba(77, 168, 218, 0.06);
+  --accent-glow-strong: rgba(77, 168, 218, 0.12);
+
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-color-hover: rgba(0, 0, 0, 0.15);
+  --border-accent: rgba(77, 168, 218, 0.25);
+
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 30px rgba(77, 168, 218, 0.1);
+
+  --glass-blur: blur(20px);
+  --glass-border: 1px solid var(--border-color);
+
+  color-scheme: light;
+}
+
+/* ---------- Base Styles ---------- */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+  overflow-x: hidden;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-tertiary);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ---------- Container ---------- */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+/* ---------- Section ---------- */
+.section {
+  padding: var(--section-padding);
+}
+
+/* ---------- Section Label ---------- */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label::before {
+  content: '//';
+  opacity: 0.6;
+}
+
+/* ---------- Section Heading ---------- */
+.section-heading {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: var(--text-heading);
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+/* ---------- Fade-in Animation ---------- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Glass Card ---------- */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-base),
+              border-color var(--transition-base),
+              box-shadow var(--transition-base),
+              transform var(--transition-base);
+}
+
+.glass-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-color-hover);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+/* ---------- Badge / Pill ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.badge:hover {
+  color: var(--accent-primary);
+  border-color: var(--border-accent);
+  background: var(--accent-glow);
+}
+
+/* ---------- Button ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: #000000;
+  box-shadow: 0 4px 20px rgba(137, 207, 240, 0.2);
+}
+
+.btn-primary:hover {
+  background: var(--accent-secondary);
+  box-shadow: 0 6px 30px rgba(137, 207, 240, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color-hover);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+/* ---------- Social Icon ---------- */
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.social-icon:hover {
+  color: var(--accent-primary);
+  border-color: var(--border-accent);
+  background: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.social-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  background: var(--accent-primary);
+  color: #000000;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 80px 0;
+  }
+}

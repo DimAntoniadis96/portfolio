@@ -1,0 +1,80 @@
+/* ============================================
+   CONTACT SECTION
+   ============================================ */
+
+.contact {
+  position: relative;
+}
+
+.contact-card {
+  padding: 60px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glow behind card */
+.contact-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--accent-glow-strong) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contact-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-heading {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: var(--text-heading);
+  line-height: 1.2;
+}
+
+.contact-text {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 480px;
+  line-height: 1.7;
+}
+
+.contact-email {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--accent-primary);
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.contact-email:hover {
+  background: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.contact-socials {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .contact-card {
+    padding: 40px 24px;
+  }
+}
