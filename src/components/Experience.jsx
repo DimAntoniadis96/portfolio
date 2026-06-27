@@ -6,57 +6,44 @@ const EXPERIENCES = [
     title: 'Co-owner & Frontend Developer',
     company: 'study-saga.com',
     companyUrl: 'https://study-saga.com',
-    period: 'January 2025 – Present',
+    period: 'Jan 2025 – Present',
     location: 'Remote',
     type: 'current',
-    highlights: [
-      'Built responsive user interfaces with React, TypeScript, Tailwind CSS and Framer Motion',
-      'Integrated Discord Embedded App SDK with Clerk authentication, enabling the platform to run as a Discord Activity',
-      'Designed and implemented real-time collaborative study rooms with live chat, social presence and synchronized group timers using Convex',
-      'Built gamification features including XP/leveling, quests, virtual currency, in-app shop, referral program and daily rewards',
-      'Used PostHog, Sentry, GrowthBook and Cloudflare R2 for analytics, monitoring, feature rollouts and asset delivery',
-    ],
+    tags: ['React', 'TypeScript', 'Convex', 'Clerk', 'Discord SDK'],
+    summary: 'Built and shipped a production platform serving 40,000+ users across web and Discord. Led all frontend development — from responsive UIs and real-time collaboration to gamification, analytics, and feature rollouts.',
   },
   {
     title: 'Customer Service Representative',
-    company: 'CQS – Public Power Corporation Project',
-    period: 'April 2026 – Present',
+    company: 'CQS – Public Power Corporation',
+    period: 'Apr 2026 – Present',
     location: 'Remote',
     type: 'current',
-    highlights: [
-      'Provide inbound customer service and support for customers of Public Power Corporation (PPC/DEI)',
-      'Record customer interactions accurately and manage customer data in CRM system',
-    ],
+    tags: ['CRM', 'Communication'],
+    summary: 'Providing inbound customer service and support, managing customer data in CRM systems for one of Greece\'s largest utilities.',
   },
   {
     title: 'Data Quality Control Specialist',
-    company: 'Archeiothiki – National Cadastre Project',
-    period: 'February 2025 – April 2026',
-    location: 'Thessaloniki, Greece',
-    highlights: [
-      'Performed quality control checks on digitized legal and land registry documents',
-      'Reviewed and verified data entries to identify inconsistencies and improve accuracy',
-    ],
+    company: 'Archeiothiki – National Cadastre',
+    period: 'Feb 2025 – Apr 2026',
+    location: 'Thessaloniki',
+    tags: ['Quality Control', 'Data Verification'],
+    summary: 'Performed quality control on digitized legal and land registry documents, reviewed and verified data entries to improve accuracy across the national cadastre project.',
   },
   {
     title: 'Sales & Event Operations Coordinator',
     company: 'Athinaikon Luxury Design',
-    period: 'April 2022 – January 2025',
-    location: 'Thessaloniki, Greece',
-    highlights: [
-      'Managed client communication, sales discussions and event bookings for high-profile private clients, business owners and public-sector projects',
-      'Coordinated event planning and execution from initial request to final delivery',
-    ],
+    period: 'Apr 2022 – Jan 2025',
+    location: 'Thessaloniki',
+    tags: ['Sales', 'Event Planning', 'Client Relations'],
+    summary: 'Managed client communication, sales discussions and end-to-end event planning for high-profile private and public-sector clients.',
   },
   {
     title: 'Delivery Associate',
     company: 'Amazon',
-    period: 'June 2019 – March 2020',
+    period: 'Jun 2019 – Mar 2020',
     location: 'Munich, Germany',
-    highlights: [
-      'Managed daily delivery routes and completed deliveries in a fast-paced, time-sensitive environment',
-      'Worked independently while maintaining reliability and a high standard of customer service',
-    ],
+    tags: ['Logistics', 'Operations'],
+    summary: 'Managed daily delivery routes in a fast-paced, time-sensitive environment while maintaining high standards of reliability and customer service.',
   },
 ];
 
@@ -69,39 +56,53 @@ export default function Experience() {
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           <div className="experience-header">
             <span className="section-label">Experience</span>
-            <h2 className="section-heading">Where I've worked</h2>
-            <p>My professional journey — from logistics to software development.</p>
+            <h2 className="section-heading">Where I've Worked</h2>
           </div>
 
-          <div className="experience-timeline">
-            {EXPERIENCES.map((exp, i) => (
-              <div className="experience-item glass-card" key={i}>
-                <div className="experience-item-header">
-                  <div className="experience-item-left">
-                    <h3 className="experience-item-title">{exp.title}</h3>
-                    <span className="experience-item-company">
+          <div className="exp-zigzag">
+            {/* Central vertical line */}
+            <div className="exp-center-line" />
+
+            {EXPERIENCES.map((exp, i) => {
+              const isLeft = i % 2 === 0;
+              return (
+                <div className={`exp-zrow ${isLeft ? 'left' : 'right'}`} key={i}>
+                  {/* Dot on the center line */}
+                  <div className="exp-zdot-wrapper">
+                    <div className={`exp-zdot ${exp.type === 'current' ? 'pulse' : ''}`} />
+                  </div>
+
+                  {/* Card */}
+                  <div className="exp-zcard">
+                    <span className="exp-zperiod">{exp.period} · {exp.location}</span>
+                    <div className="exp-zcard-top">
+                      <h3 className="exp-ztitle">{exp.title}</h3>
+                      {exp.type === 'current' && (
+                        <span className="exp-zbadge">
+                          <span className="exp-zbadge-dot" />
+                          Current
+                        </span>
+                      )}
+                    </div>
+                    <span className="exp-zcompany">
                       {exp.companyUrl ? (
                         <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer">
-                          {exp.company}
+                          {exp.company} ↗
                         </a>
                       ) : (
                         exp.company
                       )}
                     </span>
-                  </div>
-                  <div className="experience-item-right">
-                    {exp.type === 'current' && <span className="experience-current-badge">Current</span>}
-                    <span className="experience-item-period">{exp.period}</span>
-                    <span className="experience-item-location">{exp.location}</span>
+                    <p className="exp-zsummary">{exp.summary}</p>
+                    <div className="exp-ztags">
+                      {exp.tags.map((tag) => (
+                        <span className="exp-ztag" key={tag}>{tag}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <ul className="experience-item-highlights">
-                  {exp.highlights.map((h, j) => (
-                    <li key={j}>{h}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

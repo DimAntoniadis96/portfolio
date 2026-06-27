@@ -28,16 +28,13 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.project-card.featured {
   border-color: color-mix(in srgb, var(--accent-primary) 36%, var(--border-color));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-primary) 10%, transparent);
 }
 
 .project-media {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 8;
   overflow: hidden;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
@@ -116,10 +113,10 @@
 
 /* Card body */
 .project-body {
-  padding: 26px 28px 28px;
+  padding: 20px 24px 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   flex: 1;
 }
 
@@ -131,10 +128,10 @@
 }
 
 .project-title {
-  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
   font-weight: 700;
   color: var(--text-heading);
-  line-height: 1.08;
+  line-height: 1.15;
 }
 
 .project-subtitle {
@@ -144,24 +141,24 @@
 }
 
 .project-desc {
-  font-size: 1rem;
+  font-size: 0.92rem;
   color: var(--text-secondary);
-  line-height: 1.65;
+  line-height: 1.6;
   max-width: 720px;
 }
 
 .project-tech {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .project-actions {
   display: flex;
   gap: 12px;
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: 10px;
 }
 
 .project-actions .btn {

@@ -29,6 +29,7 @@ const SKILL_CATEGORIES = [
     summary: 'Auth, realtime data, databases, and the backend pieces that make apps real.',
     skills: [
       'Python',
+      'Pygame',
       'C',
       'Convex',
       'Supabase',

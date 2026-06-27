@@ -1,80 +1,153 @@
 /* ============================================
-   CONTACT SECTION
+   CONTACT SECTION — Split Layout + Info Cards
    ============================================ */
 
 .contact {
   position: relative;
 }
 
-.contact-card {
-  padding: 60px;
-  text-align: center;
+/* --- Split Layout --- */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* --- Left: Headline + CTA --- */
+.contact-left {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Ambient glow behind card */
-.contact-card::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--accent-glow-strong) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.contact-card > * {
-  position: relative;
-  z-index: 1;
+  gap: 20px;
 }
 
 .contact-heading {
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 4.5vw, 3rem);
   font-weight: 800;
   color: var(--text-heading);
-  line-height: 1.2;
+  line-height: 1.15;
+}
+
+.heading-accent {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .contact-text {
   font-size: 1.05rem;
   color: var(--text-secondary);
-  max-width: 480px;
+  max-width: 440px;
   line-height: 1.7;
 }
 
-.contact-email {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  color: var(--accent-primary);
-  text-decoration: none;
-  padding: 10px 20px;
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-full);
-  transition: all var(--transition-fast);
-}
-
-.contact-email:hover {
-  background: var(--accent-glow);
-  transform: translateY(-2px);
+.contact-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 8px;
 }
 
 .contact-socials {
   display: flex;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 10px;
 }
 
-@media (max-width: 600px) {
-  .contact-card {
-    padding: 40px 24px;
+/* --- Right: Info Cards --- */
+.contact-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-info-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base), background var(--transition-base);
+  cursor: default;
+}
+
+a.contact-info-card {
+  cursor: pointer;
+}
+
+a.contact-info-card:hover {
+  border-color: var(--border-color-hover);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-3px);
+  background: var(--bg-card-hover);
+}
+
+.contact-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(137, 207, 240, 0.08);
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.contact-info-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.contact-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-info-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.contact-info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact-info-arrow {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+a.contact-info-card:hover .contact-info-arrow {
+  color: var(--accent-primary);
+  transform: translate(2px, -2px);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .contact-actions {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

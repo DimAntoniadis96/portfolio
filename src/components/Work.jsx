@@ -56,6 +56,23 @@ const PROJECTS = [
       website: 'https://routina-landing-page.vercel.app/',
     },
   },
+  {
+    badge: 'Desktop Game',
+    title: 'Pong',
+    subtitle: 'Classic 2D Arcade Game',
+    meta: 'Python & Pygame',
+    image: {
+      src: '/projects/pong.png',
+      alt: 'Pong game screenshot',
+      ratio: '2850 / 1350',
+    },
+    description:
+      'A fully functional 2D recreation of the classic Pong game built with Python. Simply download and run the .exe file to play instantly without any setup.',
+    tech: ['Python', 'Pygame', 'OOP', 'Game Development'],
+    links: {
+      website: 'https://github.com/DimAntoniadis96/Pong-game',
+    },
+  },
 ];
 
 export default function Work() {
@@ -67,7 +84,7 @@ export default function Work() {
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           <div className="work-header">
             <span className="section-label">Work</span>
-            <h2 className="section-heading">What I've built</h2>
+            <h2 className="section-heading">What I've Built</h2>
             <p>Selected products and client websites I've designed, built, and shipped.</p>
           </div>
 
