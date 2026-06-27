@@ -4,24 +4,57 @@ import './Work.css';
 const PROJECTS = [
   {
     featured: true,
-    badge: 'Featured · Production',
-    stats: '40K+ users',
+    badge: 'Featured',
+    stats: '40K users reached',
     title: 'Study Saga',
-    subtitle: 'Co-owner & Frontend Developer · January 2025 – present',
+    subtitle: 'Lofi Pomodoro & Study Timer · 2025 – present',
     meta: 'Web & Discord Platform',
+    image: {
+      src: '/projects/study-saga.png',
+      alt: 'Study Saga landing page with a lofi pomodoro study timer hero',
+      ratio: '2856 / 1498',
+    },
     description:
-      'Production platform serving 40,000+ users across web and Discord, with a mobile app in development. Features real-time collaborative study rooms with live chat, social presence and synchronized group timers, gamification (XP/leveling, quests, virtual currency, in-app shop, referral program, daily rewards), and full Discord Activity integration via Clerk auth.',
-    tech: ['React', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Convex', 'Clerk', 'Discord SDK', 'PostHog', 'Sentry', 'GrowthBook', 'Cloudflare R2'],
+      'A lo-fi Pomodoro study timer with a game layer on top. Earn XP, level up, and study alongside thousands of other students.',
+    tech: ['React', 'Tailwind', 'TypeScript', 'Convex', 'Cloudflare R2', 'GitHub Actions', 'Docker', 'Vite', 'DataDog', 'Discord.js', 'PostHog', 'GrowthBook', 'Vercel', 'Sentry'],
     links: {
       website: 'https://study-saga.com',
     },
-    highlights: [
-      'Built responsive UIs with React, TypeScript, Tailwind CSS & Framer Motion',
-      'Integrated Discord Embedded App SDK with Clerk authentication',
-      'Designed real-time collaborative study rooms using Convex',
-      'Built gamification features: XP/leveling, quests, virtual currency & shop',
-      'Used PostHog, Sentry, GrowthBook & Cloudflare R2 for analytics and delivery',
-    ],
+  },
+  {
+    badge: 'Client Website',
+    title: 'POX Academy',
+    subtitle: 'Football academy website',
+    meta: 'Sports Academy Landing Page',
+    image: {
+      src: '/projects/pox-academy.png',
+      alt: 'POX Academy football academy landing page',
+      ratio: '2864 / 1472',
+    },
+    description:
+      'A Greek football academy website for Π.Ο. Ξηροκρήνης with programs, schedules, registration calls to action, and clear information for parents.',
+    tech: ['Responsive UI', 'Greek Content', 'Sports Academy', 'Vercel', 'Contact Flow'],
+    links: {
+      website: 'https://pox-academy2.vercel.app/',
+    },
+  },
+  {
+    badge: 'Restaurant Website',
+    title: 'Routina',
+    subtitle: 'Cocktail & pizza bar landing page',
+    meta: 'Hospitality Landing Page',
+    image: {
+      src: '/projects/routina.png',
+      alt: 'Routina cocktail and pizza bar landing page',
+      fit: 'contain',
+      ratio: '2850 / 1350',
+    },
+    description:
+      'A restaurant landing page for Routina Cocktail & Pizza Bar, presenting wood-fired pizza, cocktails, menu highlights, opening hours, and the brand atmosphere.',
+    tech: ['Next.js', 'Responsive UI', 'Menu Design', 'Greek Content', 'Vercel'],
+    links: {
+      website: 'https://routina-landing-page.vercel.app/',
+    },
   },
 ];
 
@@ -35,7 +68,7 @@ export default function Work() {
           <div className="work-header">
             <span className="section-label">Work</span>
             <h2 className="section-heading">What I've built</h2>
-            <p>My flagship project — a production platform serving tens of thousands of users.</p>
+            <p>Selected products and client websites I've designed, built, and shipped.</p>
           </div>
 
           <div className="work-grid">
@@ -44,7 +77,22 @@ export default function Work() {
                 className={`project-card glass-card ${project.featured ? 'featured' : ''}`}
                 key={project.title}
               >
-                <div className="project-header-area">
+                {project.image && (
+                  <div
+                    className="project-media"
+                    style={{ aspectRatio: project.image.ratio }}
+                  >
+                    <img
+                      src={project.image.src}
+                      alt={project.image.alt}
+                      className={project.image.fit === 'contain' ? 'contain' : undefined}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                )}
+
+                <div className="project-body">
                   <div className="project-header-badges">
                     {project.badge && (
                       <span className="project-featured-badge">{project.badge}</span>
@@ -53,21 +101,11 @@ export default function Work() {
                       <span className="project-stats-badge">{project.stats}</span>
                     )}
                   </div>
-                </div>
 
-                <div className="project-body">
                   <span className="project-meta">{project.meta}</span>
                   <h3 className="project-title">{project.title}</h3>
                   <span className="project-subtitle">{project.subtitle}</span>
                   <p className="project-desc">{project.description}</p>
-
-                  {project.highlights && (
-                    <ul className="project-highlights">
-                      {project.highlights.map((h, i) => (
-                        <li key={i}>{h}</li>
-                      ))}
-                    </ul>
-                  )}
 
                   <div className="project-tech">
                     {project.tech.map((t) => (
