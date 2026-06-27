@@ -10,7 +10,7 @@ const EXPERIENCES = [
     location: 'Remote',
     type: 'current',
     tags: ['React', 'TypeScript', 'Convex', 'Clerk', 'Discord SDK'],
-    summary: 'Built and shipped a production platform serving 40,000+ users across web and Discord. Led all frontend development — from responsive UIs and real-time collaboration to gamification, analytics, and feature rollouts.',
+    summary: 'Built and shipped a production platform serving 40,000+ users across web, desktop, and Discord. Led all frontend development — from responsive UIs and real-time collaboration to gamification, analytics, and feature rollouts.',
   },
   {
     title: 'Customer Service Representative',

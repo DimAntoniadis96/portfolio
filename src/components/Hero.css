@@ -264,13 +264,21 @@
 }
 
 .cv-download-content:hover {
-  transform: translateY(-5px);
-  color: #ffffff;
+  transform: scale(1.05);
 }
 
 .download-icon {
   margin-bottom: 8px;
   animation: bounce 2s infinite ease-in-out;
+}
+
+.download-icon-img {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 8px;
+  object-fit: contain;
+  animation: bounce 2s infinite ease-in-out;
+  filter: invert(1) drop-shadow(0 0 10px var(--accent-primary));
 }
 
 @keyframes bounce {

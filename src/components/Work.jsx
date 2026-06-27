@@ -8,7 +8,7 @@ const PROJECTS = [
     stats: '40K users reached',
     title: 'Study Saga',
     subtitle: 'Lofi Pomodoro & Study Timer · 2025 – present',
-    meta: 'Web & Discord Platform',
+    meta: 'Web, Desktop & Discord Platform',
     image: {
       src: '/projects/study-saga.png',
       alt: 'Study Saga landing page with a lofi pomodoro study timer hero',

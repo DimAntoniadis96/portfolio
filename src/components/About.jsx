@@ -20,7 +20,7 @@ export default function About() {
                 <span className="about-stat-label">Users served</span>
               </div>
               <div className="about-stat">
-                <span className="about-stat-value">2</span>
+                <span className="about-stat-value">3</span>
                 <span className="about-stat-label">Platforms</span>
               </div>
               <div className="about-stat">
@@ -34,7 +34,7 @@ export default function About() {
                 I'm <strong>Dimitrios Antoniadis</strong>, a <strong>junior software developer</strong> based
                 in <strong>Thessaloniki, Greece</strong>. I'm the co-owner and frontend developer
                 of <a href="https://study-saga.com" target="_blank" rel="noopener noreferrer">study-saga.com</a>,
-                a production platform serving <strong>40,000+ users</strong> across web and Discord, with a mobile
+                a production platform serving <strong>40,000+ users</strong> across web, desktop, and Discord, with a mobile
                 app currently in development.
               </p>
               <p>

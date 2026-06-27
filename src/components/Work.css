@@ -20,7 +20,7 @@
 .work-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  gap: 20px;
 }
 
 /* --- Project Card --- */
@@ -74,12 +74,12 @@
 .project-featured-badge {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
-  padding: 7px 16px;
+  min-height: 28px;
+  padding: 5px 12px;
   background: var(--accent-primary);
   color: #000000;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -91,13 +91,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 34px;
-  padding: 7px 16px;
+  min-height: 28px;
+  padding: 5px 12px;
   background: var(--accent-glow);
   border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, var(--border-color));
   color: var(--accent-primary);
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 500;
   border-radius: var(--radius-full);
   margin-left: auto;
@@ -113,57 +113,62 @@
 
 /* Card body */
 .project-body {
-  padding: 20px 24px 22px;
+  padding: 16px 20px 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
 }
 
 .project-meta {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-tertiary);
   letter-spacing: 0.08em;
 }
 
 .project-title {
-  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-size: clamp(1.2rem, 2vw, 1.4rem);
   font-weight: 700;
   color: var(--text-heading);
   line-height: 1.15;
 }
 
 .project-subtitle {
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   color: var(--text-tertiary);
   font-family: var(--font-mono);
 }
 
 .project-desc {
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
   max-width: 720px;
 }
 
 .project-tech {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.project-tech .tag {
+  font-size: 0.7rem;
+  padding: 3px 8px;
 }
 
 .project-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   margin-top: auto;
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
 .project-actions .btn {
-  padding: 10px 22px;
-  font-size: 0.88rem;
+  padding: 8px 18px;
+  font-size: 0.8rem;
 }
 
 /* --- Responsive --- */
