@@ -12,33 +12,75 @@ const NAV_ITEMS = [
 
 export default function Navbar({ theme, toggleTheme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState('#about');
 
   useEffect(() => {
-    const sections = NAV_ITEMS.map((item) =>
-      document.querySelector(item.href)
-    ).filter(Boolean);
+    let frameId = null;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection('#' + entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
+    const getActiveSection = () => {
+      const navHeight =
+        document.querySelector('.navbar-wrapper')?.getBoundingClientRect().height ?? 80;
+      const marker = window.scrollY + navHeight + 80;
+      const isPageEnd =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
 
-    sections.forEach((sec) => observer.observe(sec));
-    return () => observer.disconnect();
+      if (isPageEnd) {
+        return NAV_ITEMS[NAV_ITEMS.length - 1].href;
+      }
+
+      return NAV_ITEMS.reduce((current, item) => {
+        const section = document.querySelector(item.href);
+        if (!section) {
+          return current;
+        }
+
+        return section.offsetTop <= marker ? item.href : current;
+      }, NAV_ITEMS[0].href);
+    };
+
+    const updateActiveSection = () => {
+      frameId = null;
+      const nextSection = getActiveSection();
+      setActiveSection((current) =>
+        current === nextSection ? current : nextSection
+      );
+    };
+
+    const scheduleUpdate = () => {
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(updateActiveSection);
+      }
+    };
+
+    scheduleUpdate();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, []);
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
     const el = document.querySelector(href);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      const navHeight =
+        document.querySelector('.navbar-wrapper')?.getBoundingClientRect().height ?? 80;
+      const targetTop = el.getBoundingClientRect().top + window.scrollY;
+
+      setActiveSection(href);
+      window.scrollTo({
+        top: Math.max(targetTop - navHeight - 24, 0),
+        behavior: 'smooth',
+      });
+      if (e.detail > 0) {
+        e.currentTarget.blur();
+      }
       setMobileOpen(false);
     }
   };
@@ -63,6 +105,7 @@ export default function Navbar({ theme, toggleTheme }) {
               <a
                 className={`nav-link ${activeSection === item.href ? 'active' : ''}`}
                 href={item.href}
+                aria-current={activeSection === item.href ? 'page' : undefined}
                 onClick={(e) => handleNavClick(e, item.href)}
               >
                 {item.label}

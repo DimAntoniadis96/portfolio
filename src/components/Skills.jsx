@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Skills.css';
 
@@ -57,7 +56,6 @@ const SKILL_CATEGORIES = [
 
 export default function Skills() {
   const { ref, isVisible } = useFadeIn();
-  const [activeTool, setActiveTool] = useState(null);
 
   return (
     <section className="skills section" id="skills">
@@ -65,11 +63,13 @@ export default function Skills() {
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           <div className="skills-header">
             <div>
-              <span className="section-label">Skill Tree</span>
-              <h2 className="section-heading">The tools behind the work</h2>
+              <span className="section-label">TECH STACK</span>
+              <h2 className="section-heading">
+                Technologies <span>I Work With</span>
+              </h2>
             </div>
             <p className="skills-description">
-              A compact stack for building fast interfaces, useful products, and clean releases.
+              Technologies and tools I use to design, build, and deploy modern web applications.
             </p>
           </div>
 
@@ -88,27 +88,17 @@ export default function Skills() {
                     <span className="toolkit-row-index">
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    <div>
-                      <h3 className="category-title">{cat.title}</h3>
-                      <p className="category-summary">{cat.summary}</p>
-                    </div>
+                    <h3 className="category-title">{cat.title}</h3>
                   </div>
+                  <p className="category-summary">{cat.summary}</p>
 
-                  <div className="toolkit-tools">
+                  <ul className="toolkit-tools" aria-label={`${cat.title} technologies`}>
                     {cat.skills.map((skill) => (
-                      <button
-                        type="button"
-                        className={`toolkit-tool ${activeTool === skill ? 'active' : ''}`}
-                        aria-pressed={activeTool === skill}
-                        key={skill}
-                        onClick={() => setActiveTool(skill)}
-                        onFocus={() => setActiveTool(skill)}
-                        onMouseEnter={() => setActiveTool(skill)}
-                      >
+                      <li className="toolkit-tool" key={skill}>
                         {skill}
-                      </button>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </article>
               ))}
             </div>
