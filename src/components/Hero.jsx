@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import './Hero.css';
 
 export default function Hero() {
+  const [isFlipped, setIsFlipped] = useState(false);
   const handleScrollTo = (e, id) => {
     e.preventDefault();
     document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -67,7 +69,10 @@ export default function Hero() {
 
           {/* Right: Photo */}
           <div className="hero-photo-wrapper">
-            <div className="hero-photo-card flip-container">
+            <div 
+              className={`hero-photo-card flip-container ${isFlipped ? 'flipped' : ''}`}
+              onClick={() => setIsFlipped(!isFlipped)}
+            >
               <div className="flipper">
                 {/* Front: Photo */}
                 <div className="front">

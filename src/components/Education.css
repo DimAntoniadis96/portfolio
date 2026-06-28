@@ -206,4 +206,12 @@
     grid-template-columns: 1fr;
     gap: 48px;
   }
+  
+  .edu-card-body {
+    padding: 20px 20px 20px 16px;
+  }
+  
+  .lang-card {
+    padding: 20px;
+  }
 }

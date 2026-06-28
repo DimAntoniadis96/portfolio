@@ -220,6 +220,14 @@
     left: 16px;
   }
 
+  .exp-zrow {
+    margin-bottom: 0;
+  }
+
+  .exp-zrow + .exp-zrow {
+    margin-top: 20px;
+  }
+
   .exp-zrow.left,
   .exp-zrow.right {
     padding-left: 44px;
@@ -234,5 +242,42 @@
 
   .exp-zcard {
     padding: 20px;
+  }
+
+  .exp-ztitle {
+    font-size: 1rem;
+  }
+
+  .exp-zsummary {
+    font-size: 0.85rem;
+  }
+}
+
+/* --- Very small screens --- */
+@media (max-width: 400px) {
+  .exp-center-line {
+    left: 10px;
+  }
+
+  .exp-zdot-wrapper {
+    left: 10px;
+  }
+
+  .exp-zrow.left,
+  .exp-zrow.right {
+    padding-left: 32px;
+  }
+
+  .exp-zcard {
+    padding: 16px;
+  }
+
+  .exp-ztags {
+    gap: 6px;
+  }
+
+  .exp-ztag {
+    padding: 3px 8px;
+    font-size: 0.65rem;
   }
 }

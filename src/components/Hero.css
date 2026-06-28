@@ -184,9 +184,16 @@
 
 .flip-container {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.flip-container:hover .flipper {
+@media (hover: hover) {
+  .flip-container:hover .flipper {
+    transform: rotateY(180deg);
+  }
+}
+
+.flip-container.flipped .flipper {
   transform: rotateY(180deg);
 }
 
@@ -321,6 +328,7 @@
 
   .hero-photo-card {
     width: 300px;
+    height: 380px;
   }
 }
 

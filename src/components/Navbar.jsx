@@ -65,6 +65,21 @@ export default function Navbar({ theme, toggleTheme }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (mobileOpen && !e.target.closest('.navbar')) {
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [mobileOpen]);
+
   const handleNavClick = (e, href) => {
     e.preventDefault();
     const el = document.querySelector(href);

@@ -151,3 +151,19 @@ a.contact-info-card:hover .contact-info-arrow {
     align-items: flex-start;
   }
 }
+
+@media (max-width: 400px) {
+  .contact-info-card {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .contact-info-value {
+    font-size: 0.85rem;
+  }
+  
+  .contact-info-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
