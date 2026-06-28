@@ -1,9 +1,0 @@
-{
-  "name": "portfolio-reviews-api",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "mongoose": "^8.4.0"
-  }
-}
