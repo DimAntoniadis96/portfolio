@@ -3,6 +3,8 @@ import { useFadeIn } from '../hooks/useFadeIn';
 import './Feedback.css';
 
 const STORAGE_KEY = 'portfolio-guestbook-notes-v1';
+const AUTHOR_ID_STORAGE_KEY = 'portfolio-guestbook-author-id-v1';
+const NOTE_POSITIONS_STORAGE_KEY = 'portfolio-guestbook-note-positions-v1';
 const NOTE_WIDTH = 190;
 const NOTE_HEIGHT = 150;
 const NOTE_MARGIN = 12;
@@ -11,6 +13,7 @@ const BOARD_HINT_SAFE_AREA = 70;
 const AUTHOR_MAX_LENGTH = 24;
 const MESSAGE_MAX_LENGTH = 180;
 const KEYBOARD_STEP = 12;
+const REVIEWS_API_BASE_URL = (import.meta.env.VITE_REVIEWS_API_BASE_URL || '').trim().replace(/\/+$/, '');
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
@@ -29,6 +32,118 @@ function clampNoteToBoard(note, boardRect) {
   };
 }
 
+function createId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function getNoteAnimationDelay(id) {
+  const hash = String(id).split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return `${(hash % 5) * -1.2}s`;
+}
+
+function sanitizeText(value, maxLength) {
+  if (typeof value !== 'string') return '';
+  return value.trim().slice(0, maxLength);
+}
+
+function formatNoteDate(value = new Date()) {
+  const date = new Date(value);
+  const safeDate = Number.isNaN(date.getTime()) ? new Date() : date;
+  const month = safeDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+  const day = safeDate.getDate();
+
+  return `${month} ${day}`;
+}
+
+function getDefaultNotePosition(index, boardRect) {
+  const boardWidth = boardRect?.width || 700;
+  const columnWidth = NOTE_WIDTH + NOTE_MARGIN;
+  const rowHeight = NOTE_HEIGHT + NOTE_MARGIN;
+  const columns = Math.max(1, Math.floor((boardWidth - BOARD_EDGE_PADDING) / columnWidth));
+
+  return {
+    x: BOARD_EDGE_PADDING + ((index % columns) * columnWidth),
+    y: BOARD_EDGE_PADDING + (Math.floor(index / columns) * rowHeight),
+  };
+}
+
+function getSpawnPosition(boardRect) {
+  if (!boardRect) {
+    return { x: 100, y: 100 };
+  }
+
+  return clampNoteToBoard({
+    x: (boardRect.width / 2) - (NOTE_WIDTH / 2) + (Math.random() * 40 - 20),
+    y: (boardRect.height / 2) - (NOTE_HEIGHT / 2) + (Math.random() * 40 - 20),
+  }, boardRect);
+}
+
+function getStoredAuthorId() {
+  if (typeof window === 'undefined') return createId();
+
+  try {
+    const existingId = window.localStorage.getItem(AUTHOR_ID_STORAGE_KEY);
+    if (existingId) return existingId;
+
+    const nextId = createId();
+    window.localStorage.setItem(AUTHOR_ID_STORAGE_KEY, nextId);
+    return nextId;
+  } catch {
+    return createId();
+  }
+}
+
+function getStoredNotePositions() {
+  if (typeof window === 'undefined') return {};
+
+  try {
+    const storedPositions = window.localStorage.getItem(NOTE_POSITIONS_STORAGE_KEY);
+    if (!storedPositions) return {};
+
+    const parsedPositions = JSON.parse(storedPositions);
+    if (!parsedPositions || typeof parsedPositions !== 'object') return {};
+
+    return parsedPositions;
+  } catch {
+    return {};
+  }
+}
+
+function storeNotePositions(notes) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const positions = notes.reduce((positionMap, note) => {
+      if (Number.isFinite(note.x) && Number.isFinite(note.y)) {
+        positionMap[String(note.id)] = { x: note.x, y: note.y };
+      }
+
+      return positionMap;
+    }, {});
+
+    window.localStorage.setItem(NOTE_POSITIONS_STORAGE_KEY, JSON.stringify(positions));
+  } catch {
+    // Dragging still works if storage is unavailable.
+  }
+}
+
+function createNoteFromReview(review, position) {
+  const id = String(review.id || createId());
+
+  return {
+    id,
+    author: sanitizeText(review.alias, AUTHOR_MAX_LENGTH) || 'Visitor',
+    date: formatNoteDate(review.createdAt),
+    text: sanitizeText(review.body, MESSAGE_MAX_LENGTH),
+    x: position.x,
+    y: position.y,
+  };
+}
+
 function getStoredNotes() {
   if (typeof window === 'undefined') return [];
 
@@ -41,13 +156,13 @@ function getStoredNotes() {
 
     return parsedNotes.filter((note) => (
       note &&
-      typeof note.id === 'number' &&
+      (typeof note.id === 'number' || typeof note.id === 'string') &&
       typeof note.author === 'string' &&
       typeof note.date === 'string' &&
       typeof note.text === 'string' &&
       Number.isFinite(note.x) &&
       Number.isFinite(note.y)
-    ));
+    )).map((note) => ({ ...note, id: String(note.id) }));
   } catch {
     return [];
   }
@@ -57,8 +172,7 @@ export default function Feedback() {
   const { ref, isVisible } = useFadeIn();
   
   const boardRef = useRef(null);
-  const submitTimeoutRef = useRef(null);
-  const [notes, setNotes] = useState(getStoredNotes);
+  const [notes, setNotes] = useState(() => (REVIEWS_API_BASE_URL ? [] : getStoredNotes()));
   
   const [draggingId, setDraggingId] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -66,6 +180,7 @@ export default function Feedback() {
   const [author, setAuthor] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(Boolean(REVIEWS_API_BASE_URL));
   const [statusMessage, setStatusMessage] = useState('');
 
   const resolveCollisions = useCallback((currentNotes, fixedId = null) => {
@@ -139,13 +254,78 @@ export default function Feedback() {
     return resolved;
   }, []);
 
+  const buildNotesFromReviews = useCallback((reviews, currentNotes = []) => {
+    const boardRect = boardRef.current?.getBoundingClientRect();
+    const existingNotes = new Map(currentNotes.map((note) => [String(note.id), note]));
+    const storedPositions = getStoredNotePositions();
+
+    const reviewNotes = reviews.map((review, index) => {
+      const id = String(review.id || createId());
+      const savedPosition = storedPositions[id];
+      const existingNote = existingNotes.get(id);
+      const defaultPosition = getDefaultNotePosition(index, boardRect);
+      const position = {
+        x: savedPosition?.x ?? existingNote?.x ?? defaultPosition.x,
+        y: savedPosition?.y ?? existingNote?.y ?? defaultPosition.y,
+      };
+
+      return createNoteFromReview({ ...review, id }, position);
+    });
+
+    return resolveCollisions(reviewNotes);
+  }, [resolveCollisions]);
+
   useEffect(() => {
+    if (REVIEWS_API_BASE_URL) {
+      storeNotePositions(notes);
+      return;
+    }
+
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
     } catch {
       // The board still works if storage is unavailable.
     }
   }, [notes]);
+
+  useEffect(() => {
+    if (!REVIEWS_API_BASE_URL) return undefined;
+
+    let isActive = true;
+
+    async function loadReviews() {
+      setIsLoadingReviews(true);
+
+      try {
+        const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`);
+        if (!response.ok) {
+          throw new Error(`Reviews API responded with ${response.status}`);
+        }
+
+        const data = await response.json();
+        const reviews = Array.isArray(data.reviews) ? data.reviews : [];
+
+        if (isActive) {
+          setNotes((currentNotes) => buildNotesFromReviews(reviews, currentNotes));
+          setStatusMessage('');
+        }
+      } catch {
+        if (isActive) {
+          setStatusMessage('The live guestbook is not connected yet. Check the API deployment and environment variables.');
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingReviews(false);
+        }
+      }
+    }
+
+    loadReviews();
+
+    return () => {
+      isActive = false;
+    };
+  }, [buildNotesFromReviews]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -157,9 +337,6 @@ export default function Feedback() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (submitTimeoutRef.current) {
-        window.clearTimeout(submitTimeoutRef.current);
-      }
     };
   }, [resolveCollisions]);
 
@@ -235,7 +412,7 @@ export default function Feedback() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedAuthor = author.trim();
     const trimmedMessage = message.trim();
@@ -247,35 +424,64 @@ export default function Feedback() {
     
     setIsSubmitting(true);
     setStatusMessage('');
-    
-    submitTimeoutRef.current = window.setTimeout(() => {
-      const today = new Date();
-      const month = today.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-      const day = today.getDate();
-      
-      let spawnX = 100;
-      let spawnY = 100;
-      if (boardRef.current) {
-        const rect = boardRef.current.getBoundingClientRect();
-        spawnX = clamp((rect.width / 2) - (NOTE_WIDTH / 2) + (Math.random() * 40 - 20), 0, Math.max(0, rect.width - NOTE_WIDTH));
-        spawnY = clamp((rect.height / 2) - (NOTE_HEIGHT / 2) + (Math.random() * 40 - 20), 0, Math.max(0, rect.height - NOTE_HEIGHT));
-      }
-      
+
+    const boardRect = boardRef.current?.getBoundingClientRect();
+    const spawnPosition = getSpawnPosition(boardRect);
+
+    if (!REVIEWS_API_BASE_URL) {
       const newNote = {
-        id: Date.now(),
+        id: createId(),
         author: trimmedAuthor,
-        date: `${month} ${day}`,
+        date: formatNoteDate(),
         text: trimmedMessage,
-        x: spawnX,
-        y: spawnY,
+        x: spawnPosition.x,
+        y: spawnPosition.y,
       };
       
       setNotes((currentNotes) => resolveCollisions([...currentNotes, newNote], newNote.id));
       setMessage('');
       setAuthor('');
       setIsSubmitting(false);
-      setStatusMessage(`Thanks, ${trimmedAuthor}. Your note is on the wall.`);
-    }, 350);
+      setStatusMessage(`Thanks, ${trimmedAuthor}. Your note is saved on this device until the live API is connected.`);
+      return;
+    }
+
+    try {
+      const reviewId = createId();
+      const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: reviewId,
+          alias: trimmedAuthor,
+          authorId: getStoredAuthorId(),
+          body: trimmedMessage,
+          replyTo: null,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Reviews API responded with ${response.status}`);
+      }
+
+      const data = await response.json();
+      const review = data.review || {
+        id: reviewId,
+        alias: trimmedAuthor,
+        body: trimmedMessage,
+        createdAt: new Date().toISOString(),
+      };
+      const newNote = createNoteFromReview(review, spawnPosition);
+
+      setNotes((currentNotes) => resolveCollisions([...currentNotes, newNote], newNote.id));
+      setMessage('');
+      setAuthor('');
+      setStatusMessage(`Thanks, ${trimmedAuthor}. Your note is live on the wall.`);
+    } catch {
+      setStatusMessage('I could not save this online yet. Check the reviews API deployment and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -301,7 +507,7 @@ export default function Feedback() {
                 <h3>Add your feedback</h3>
                 <div className="signal-live">
                   <div className="signal-live-dot" aria-hidden="true"></div>
-                  OPEN
+                  {REVIEWS_API_BASE_URL ? 'LIVE' : 'LOCAL'}
                 </div>
               </div>
 
@@ -371,10 +577,21 @@ export default function Feedback() {
                 // Drag notes, or use arrow keys when focused
               </div>
 
-              {notes.length === 0 && (
+              {isLoadingReviews && (
+                <div className="signal-board-empty">
+                  <span>Loading notes</span>
+                  <p>Fetching the latest feedback from the live wall.</p>
+                </div>
+              )}
+
+              {!isLoadingReviews && notes.length === 0 && (
                 <div className="signal-board-empty">
                   <span>No notes yet</span>
-                  <p>Be the first to leave feedback on the wall.</p>
+                  <p>
+                    {REVIEWS_API_BASE_URL
+                      ? 'Be the first to leave feedback on the live wall.'
+                      : 'Be the first to leave feedback on this local wall.'}
+                  </p>
                 </div>
               )}
               
@@ -396,7 +613,7 @@ export default function Feedback() {
                   aria-label={`${note.author} wrote on ${note.date}: ${note.text}`}
                   title="Drag to move. Use arrow keys while focused for small adjustments."
                 >
-                  <div className="signal-note-inner" style={{ animationDelay: `${(note.id % 5) * -1.2}s` }}>
+                  <div className="signal-note-inner" style={{ animationDelay: getNoteAnimationDelay(note.id) }}>
                     <div className="signal-note-header">
                       <span className="signal-note-author">{note.author}</span>
                       <span className="signal-note-date">{note.date}</span>
