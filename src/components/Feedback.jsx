@@ -1,31 +1,78 @@
-import { useState, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Feedback.css';
+
+const STORAGE_KEY = 'portfolio-guestbook-notes-v1';
+const NOTE_WIDTH = 190;
+const NOTE_HEIGHT = 150;
+const NOTE_MARGIN = 12;
+const BOARD_EDGE_PADDING = 16;
+const BOARD_HINT_SAFE_AREA = 70;
+const AUTHOR_MAX_LENGTH = 24;
+const MESSAGE_MAX_LENGTH = 180;
+const KEYBOARD_STEP = 12;
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(value, max));
+}
+
+function clampNoteToBoard(note, boardRect) {
+  const maxX = Math.max(0, boardRect.width - NOTE_WIDTH - BOARD_EDGE_PADDING);
+  const maxY = Math.max(0, boardRect.height - NOTE_HEIGHT - BOARD_HINT_SAFE_AREA);
+  const minX = maxX > BOARD_EDGE_PADDING ? BOARD_EDGE_PADDING : 0;
+  const minY = maxY > BOARD_EDGE_PADDING ? BOARD_EDGE_PADDING : 0;
+
+  return {
+    ...note,
+    x: clamp(note.x, minX, maxX),
+    y: clamp(note.y, minY, maxY),
+  };
+}
+
+function getStoredNotes() {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const storedNotes = window.localStorage.getItem(STORAGE_KEY);
+    if (!storedNotes) return [];
+
+    const parsedNotes = JSON.parse(storedNotes);
+    if (!Array.isArray(parsedNotes)) return [];
+
+    return parsedNotes.filter((note) => (
+      note &&
+      typeof note.id === 'number' &&
+      typeof note.author === 'string' &&
+      typeof note.date === 'string' &&
+      typeof note.text === 'string' &&
+      Number.isFinite(note.x) &&
+      Number.isFinite(note.y)
+    ));
+  } catch {
+    return [];
+  }
+}
 
 export default function Feedback() {
   const { ref, isVisible } = useFadeIn();
   
-  // Board State
-  const [notes, setNotes] = useState([]);
   const boardRef = useRef(null);
+  const submitTimeoutRef = useRef(null);
+  const [notes, setNotes] = useState(getStoredNotes);
   
-  // Drag State
   const [draggingId, setDraggingId] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // Form State
   const [author, setAuthor] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
-  const resolveCollisions = (currentNotes, fixedId = null) => {
+  const resolveCollisions = useCallback((currentNotes, fixedId = null) => {
     if (!boardRef.current) return currentNotes;
     const boardRect = boardRef.current.getBoundingClientRect();
-    const NOTE_WIDTH = 180; 
-    const NOTE_HEIGHT = 90; // Reduced to reflect true note height better
-    const MARGIN = 8; 
     
-    let resolved = currentNotes.map(n => ({ ...n }));
+    const resolved = currentNotes.map((note) => clampNoteToBoard(note, boardRect));
     let hasOverlap = true;
     let iterations = 0;
     
@@ -39,14 +86,14 @@ export default function Feedback() {
           let dx = a.x - b.x;
           let dy = a.y - b.y;
           
-          const overlapX = (NOTE_WIDTH + MARGIN) - Math.abs(dx);
-          const overlapY = (NOTE_HEIGHT + MARGIN) - Math.abs(dy);
+          const overlapX = (NOTE_WIDTH + NOTE_MARGIN) - Math.abs(dx);
+          const overlapY = (NOTE_HEIGHT + NOTE_MARGIN) - Math.abs(dy);
           
           if (overlapX > 0 && overlapY > 0) {
             hasOverlap = true;
-            let pushX = 0, pushY = 0;
+            let pushX = 0;
+            let pushY = 0;
             
-            // Fix perfect overlapping in corners
             if (dx === 0 && dy === 0) {
               dx = (Math.random() - 0.5);
               dy = (Math.random() - 0.5);
@@ -77,14 +124,11 @@ export default function Feedback() {
               b.y -= pushY;
             }
             
-            // Clamp immediately so they bounce off walls
             if (a.id !== fixedId) {
-              a.x = Math.max(0, Math.min(a.x, boardRect.width - NOTE_WIDTH));
-              a.y = Math.max(0, Math.min(a.y, boardRect.height - NOTE_HEIGHT));
+              Object.assign(a, clampNoteToBoard(a, boardRect));
             }
             if (b.id !== fixedId) {
-              b.x = Math.max(0, Math.min(b.x, boardRect.width - NOTE_WIDTH));
-              b.y = Math.max(0, Math.min(b.y, boardRect.height - NOTE_HEIGHT));
+              Object.assign(b, clampNoteToBoard(b, boardRect));
             }
           }
         }
@@ -93,13 +137,39 @@ export default function Feedback() {
       iterations++;
     }
     return resolved;
-  };
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    } catch {
+      // The board still works if storage is unavailable.
+    }
+  }, [notes]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setNotes((currentNotes) => resolveCollisions(currentNotes));
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (submitTimeoutRef.current) {
+        window.clearTimeout(submitTimeoutRef.current);
+      }
+    };
+  }, [resolveCollisions]);
 
   const handlePointerDown = (e, id, note) => {
-    e.stopPropagation();
-    e.target.setPointerCapture(e.pointerId);
-    
     if (!boardRef.current) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+
     const boardRect = boardRef.current.getBoundingClientRect();
     
     setDraggingId(id);
@@ -113,65 +183,99 @@ export default function Feedback() {
     if (draggingId === null || !boardRef.current) return;
     
     const boardRect = boardRef.current.getBoundingClientRect();
-    let newX = (e.clientX - boardRect.left) - dragOffset.x;
-    let newY = (e.clientY - boardRect.top) - dragOffset.y;
+    const nextPosition = clampNoteToBoard({
+      x: (e.clientX - boardRect.left) - dragOffset.x,
+      y: (e.clientY - boardRect.top) - dragOffset.y,
+    }, boardRect);
     
-    // Clamping to keep notes inside the board area
-    const NOTE_WIDTH = 180; // approximate width of .signal-note
-    const NOTE_HEIGHT = 90; // approximate height of .signal-note
-    
-    newX = Math.max(0, Math.min(newX, boardRect.width - NOTE_WIDTH));
-    newY = Math.max(0, Math.min(newY, boardRect.height - NOTE_HEIGHT));
-    
-    setNotes(notes.map(n => 
-      n.id === draggingId ? { ...n, x: newX, y: newY } : n
-    ));
+    setNotes((currentNotes) => currentNotes.map((note) => (
+      note.id === draggingId ? { ...note, x: nextPosition.x, y: nextPosition.y } : note
+    )));
   };
 
   const handlePointerUp = (e) => {
     if (draggingId !== null) {
-      e.target.releasePointerCapture(e.pointerId);
-      // Resolve collisions upon dropping, keeping the dragged note fixed
-      setNotes(prev => resolveCollisions(prev, draggingId));
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+
+      setNotes((currentNotes) => resolveCollisions(currentNotes, draggingId));
       setDraggingId(null);
     }
   };
 
+  const handleNoteKeyDown = (e, noteId) => {
+    const directions = {
+      ArrowUp: [0, -1],
+      ArrowRight: [1, 0],
+      ArrowDown: [0, 1],
+      ArrowLeft: [-1, 0],
+    };
+    const direction = directions[e.key];
+
+    if (!direction || !boardRef.current) return;
+    e.preventDefault();
+
+    const [moveX, moveY] = direction;
+    const step = e.shiftKey ? KEYBOARD_STEP * 3 : KEYBOARD_STEP;
+
+    setNotes((currentNotes) => {
+      const boardRect = boardRef.current.getBoundingClientRect();
+      const movedNotes = currentNotes.map((note) => {
+        if (note.id !== noteId) return note;
+
+        return clampNoteToBoard({
+          ...note,
+          x: note.x + (moveX * step),
+          y: note.y + (moveY * step),
+        }, boardRect);
+      });
+
+      return resolveCollisions(movedNotes, noteId);
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!message.trim() || !author.trim()) return;
+    const trimmedAuthor = author.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedMessage || !trimmedAuthor) {
+      setStatusMessage('Add your name and a short note before posting.');
+      return;
+    }
     
     setIsSubmitting(true);
+    setStatusMessage('');
     
-    // Simulate network delay
-    setTimeout(() => {
+    submitTimeoutRef.current = window.setTimeout(() => {
       const today = new Date();
-      const month = today.toLocaleString('default', { month: 'short' }).toUpperCase();
+      const month = today.toLocaleString('en-US', { month: 'short' }).toUpperCase();
       const day = today.getDate();
       
-      // Calculate a central spawn point
       let spawnX = 100;
       let spawnY = 100;
       if (boardRef.current) {
-         const rect = boardRef.current.getBoundingClientRect();
-         spawnX = (rect.width / 2) - 90 + (Math.random() * 40 - 20);
-         spawnY = (rect.height / 2) - 60 + (Math.random() * 40 - 20);
+        const rect = boardRef.current.getBoundingClientRect();
+        spawnX = clamp((rect.width / 2) - (NOTE_WIDTH / 2) + (Math.random() * 40 - 20), 0, Math.max(0, rect.width - NOTE_WIDTH));
+        spawnY = clamp((rect.height / 2) - (NOTE_HEIGHT / 2) + (Math.random() * 40 - 20), 0, Math.max(0, rect.height - NOTE_HEIGHT));
       }
       
       const newNote = {
         id: Date.now(),
-        author: author.trim(),
+        author: trimmedAuthor,
         date: `${month} ${day}`,
-        text: message.trim(),
+        text: trimmedMessage,
         x: spawnX,
         y: spawnY,
       };
       
-      // Resolve collisions, pushing old notes away from the new one
-      setNotes(prev => resolveCollisions([...prev, newNote], newNote.id));
+      setNotes((currentNotes) => resolveCollisions([...currentNotes, newNote], newNote.id));
       setMessage('');
+      setAuthor('');
       setIsSubmitting(false);
-    }, 600);
+      setStatusMessage(`Thanks, ${trimmedAuthor}. Your note is on the wall.`);
+    }, 350);
   };
 
   return (
@@ -180,10 +284,11 @@ export default function Feedback() {
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           
           <div className="feedback-header">
-            <span className="section-label">Community</span>
-            <h2 className="section-heading">Guest<span style={{ color: 'var(--accent-primary)' }}>Book</span></h2>
+            <span className="section-label">Feedback wall</span>
+            <h2 className="section-heading">Guest<span style={{ color: 'var(--accent-primary)' }}>book</span></h2>
             <p className="feedback-text">
-              Leave a message on the wall. Feel free to drag notes around to organize them!
+              Share a quick note about my work, a collaboration idea, or something I could improve.
+              Your note lands on the wall, then you can drag it into place.
             </p>
           </div>
 
@@ -192,38 +297,53 @@ export default function Feedback() {
             {/* Left: Signal Input */}
             <div className="signal-input">
               <div className="signal-input-header">
-                <span className="signal-input-title">New Entry</span>
-                <h3>Leave a message</h3>
+                <span className="signal-input-title">Sign the wall</span>
+                <h3>Add your feedback</h3>
                 <div className="signal-live">
-                  <div className="signal-live-dot"></div>
-                  ONLINE
+                  <div className="signal-live-dot" aria-hidden="true"></div>
+                  OPEN
                 </div>
               </div>
 
               <form onSubmit={handleSubmit} className="signal-form-group">
                 <div className="form-group">
-                  <label className="form-label">Name *</label>
+                  <label className="form-label" htmlFor="guestbook-name">Name *</label>
                   <input 
+                    id="guestbook-name"
                     type="text" 
                     className="form-input name-input"
                     value={author}
-                    onChange={(e) => setAuthor(e.target.value.substring(0, 15))}
-                    placeholder="Your Name"
+                    onChange={(e) => {
+                      setAuthor(e.target.value.slice(0, AUTHOR_MAX_LENGTH));
+                      setStatusMessage('');
+                    }}
+                    placeholder="Your name"
                     disabled={isSubmitting}
+                    maxLength={AUTHOR_MAX_LENGTH}
+                    autoComplete="name"
                     required
                   />
                 </div>
 
                 <div className="signal-textarea-wrapper">
+                  <label className="form-label" htmlFor="guestbook-message">Message *</label>
                   <textarea 
+                    id="guestbook-message"
                     className="signal-textarea form-textarea"
-                    placeholder="What's on your mind?"
+                    placeholder="What stood out, or what could be better?"
                     value={message}
-                    onChange={(e) => setMessage(e.target.value.substring(0, 180))}
+                    onChange={(e) => {
+                      setMessage(e.target.value.slice(0, MESSAGE_MAX_LENGTH));
+                      setStatusMessage('');
+                    }}
                     disabled={isSubmitting}
+                    maxLength={MESSAGE_MAX_LENGTH}
+                    aria-describedby="guestbook-message-count"
                     required
                   ></textarea>
-                  <span className="signal-char-count">{message.length}/180</span>
+                  <span className="signal-char-count" id="guestbook-message-count">
+                    {message.length}/{MESSAGE_MAX_LENGTH}
+                  </span>
                 </div>
 
                 <button 
@@ -231,8 +351,11 @@ export default function Feedback() {
                   className="signal-btn"
                   disabled={isSubmitting || message.trim().length === 0 || author.trim().length === 0}
                 >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  {isSubmitting ? 'Posting...' : 'Post Note'}
                 </button>
+                <p className="signal-status" id="guestbook-status" role="status" aria-live="polite">
+                  {statusMessage}
+                </p>
               </form>
             </div>
 
@@ -240,8 +363,20 @@ export default function Feedback() {
             <div 
               className="signal-board-area"
               ref={boardRef}
+              role="region"
+              aria-label="Guestbook note wall"
+              aria-describedby="guestbook-board-hint"
             >
-              <div className="signal-board-hint">// Drag any note to move it</div>
+              <div className="signal-board-hint" id="guestbook-board-hint">
+                // Drag notes, or use arrow keys when focused
+              </div>
+
+              {notes.length === 0 && (
+                <div className="signal-board-empty">
+                  <span>No notes yet</span>
+                  <p>Be the first to leave feedback on the wall.</p>
+                </div>
+              )}
               
               {notes.map(note => (
                 <div 
@@ -255,6 +390,11 @@ export default function Feedback() {
                   onPointerMove={handlePointerMove}
                   onPointerUp={handlePointerUp}
                   onPointerCancel={handlePointerUp}
+                  onKeyDown={(e) => handleNoteKeyDown(e, note.id)}
+                  tabIndex={0}
+                  role="article"
+                  aria-label={`${note.author} wrote on ${note.date}: ${note.text}`}
+                  title="Drag to move. Use arrow keys while focused for small adjustments."
                 >
                   <div className="signal-note-inner" style={{ animationDelay: `${(note.id % 5) * -1.2}s` }}>
                     <div className="signal-note-header">

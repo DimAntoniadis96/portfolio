@@ -151,12 +151,15 @@ html.light .form-input {
 
 .signal-textarea-wrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .signal-textarea {
   width: 100%;
   min-height: 160px;
-  padding: 16px;
+  padding: 16px 16px 34px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -215,6 +218,13 @@ html.light .signal-textarea {
   cursor: not-allowed;
 }
 
+.signal-status {
+  min-height: 20px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 /* --- Right: Signal Board Area --- */
 .signal-board-area {
   position: relative;
@@ -229,10 +239,40 @@ html.light .signal-textarea {
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.2);
 }
 
+.signal-board-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(280px, calc(100% - 48px));
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--text-tertiary);
+  pointer-events: none;
+  user-select: none;
+}
+
+.signal-board-empty span {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+}
+
+.signal-board-empty p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 .signal-board-hint {
   position: absolute;
   bottom: 16px;
   right: 20px;
+  left: 20px;
+  text-align: right;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--text-tertiary);
@@ -245,10 +285,21 @@ html.light .signal-textarea {
 /* --- Signal Note (Draggable) --- */
 .signal-note {
   position: absolute;
-  width: 180px;
+  width: 190px;
+  height: 150px;
   cursor: grab;
   user-select: none;
+  touch-action: none;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.signal-note:focus-visible {
+  outline: none;
+}
+
+.signal-note:focus-visible .signal-note-inner {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow-strong), var(--shadow-card);
 }
 
 .signal-note.dragging {
@@ -258,12 +309,15 @@ html.light .signal-textarea {
 }
 
 .signal-note-inner {
+  height: 100%;
   padding: 12px 16px;
   background: var(--bg-card);
   backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
   transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform 0.2s ease;
   animation: note-float 5s ease-in-out infinite;
 }
@@ -305,8 +359,43 @@ html.light .signal-textarea {
 }
 
 .signal-note-text {
+  flex: 1;
   font-size: 0.8rem;
   color: var(--text-secondary);
   line-height: 1.5;
   word-wrap: break-word;
+  word-break: break-word;
+  overflow-y: auto;
+  padding-right: 2px;
+  overscroll-behavior: contain;
+}
+
+.signal-note-text::-webkit-scrollbar {
+  width: 4px;
+}
+
+.signal-note-text::-webkit-scrollbar-thumb {
+  background: var(--border-color-hover);
+}
+
+@media (max-width: 640px) {
+  .feedback-header {
+    margin-bottom: 40px;
+  }
+
+  .signal-board-container {
+    gap: 24px;
+  }
+
+  .signal-input {
+    padding: 20px;
+  }
+
+  .signal-board-area {
+    min-height: 420px;
+  }
+
+  .signal-board-hint {
+    text-align: left;
+  }
 }
