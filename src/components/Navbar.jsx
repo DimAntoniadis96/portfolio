@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { label: 'Experience', href: '#experience' },
   { label: 'Education', href: '#education' },
   { label: 'Contact', href: '#contact' },
+  { label: 'Feedback', href: '#feedback' },
 ];
 
 export default function Navbar({ theme, toggleTheme }) {
