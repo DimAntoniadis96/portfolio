@@ -490,8 +490,10 @@ export default function Feedback() {
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           
           <div className="feedback-header">
-            <span className="section-label">Feedback wall</span>
-            <h2 className="section-heading">Guest<span style={{ color: 'var(--accent-primary)' }}>book</span></h2>
+            <div>
+              <span className="section-label">Feedback wall</span>
+              <h2 className="section-heading">Guest<span style={{ color: 'var(--accent-primary)' }}>book</span></h2>
+            </div>
             <p className="feedback-text">
               Share a quick note about my work, a collaboration idea, or something I could improve.
               Your note lands on the wall, then you can drag it into place.

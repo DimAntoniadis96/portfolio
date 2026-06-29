@@ -1,5 +1,7 @@
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Work.css';
+import InteractiveSelector from './ui/interactive-selector';
+import { Monitor, Trophy, Wine, Gamepad2 } from 'lucide-react';
 
 const PROJECTS = [
   {
@@ -7,7 +9,7 @@ const PROJECTS = [
     badge: 'Featured',
     stats: '40K users reached',
     title: 'Study Saga',
-    subtitle: 'Lofi Pomodoro & Study Timer · 2025 – present',
+    subtitle: 'Lofi Pomodoro & Study Timer',
     meta: 'Web, Desktop & Discord Platform',
     image: {
       src: '/projects/study-saga.png',
@@ -78,71 +80,37 @@ const PROJECTS = [
 export default function Work() {
   const { ref, isVisible } = useFadeIn();
 
+  const interactiveOptions = PROJECTS.map((project, index) => {
+    let Icon = Monitor;
+    if (index === 1) Icon = Trophy;
+    else if (index === 2) Icon = Wine;
+    else if (index === 3) Icon = Gamepad2;
+
+    return {
+      title: project.title,
+      description: project.description,
+      image: project.image.src,
+      icon: <Icon size={24} color="white" />,
+      url: project.links.website,
+      stats: project.stats,
+      tags: project.tech
+    };
+  });
+
   return (
     <section className="work section" id="work">
       <div className="container">
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           <div className="work-header">
-            <span className="section-label">Work</span>
-            <h2 className="section-heading">What I've Built</h2>
+            <div>
+              <span className="section-label">Work</span>
+              <h2 className="section-heading">What I've Built</h2>
+            </div>
             <p>Selected products and client websites I've designed, built, and shipped.</p>
           </div>
 
-          <div className="work-grid">
-            {PROJECTS.map((project) => (
-              <div
-                className={`project-card glass-card ${project.featured ? 'featured' : ''}`}
-                key={project.title}
-              >
-                {project.image && (
-                  <div
-                    className="project-media"
-                    style={{ aspectRatio: project.image.ratio }}
-                  >
-                    <img
-                      src={project.image.src}
-                      alt={project.image.alt}
-                      className={project.image.fit === 'contain' ? 'contain' : undefined}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                )}
-
-                <div className="project-body">
-                  <div className="project-header-badges">
-                    {project.badge && (
-                      <span className="project-featured-badge">{project.badge}</span>
-                    )}
-                    {project.stats && (
-                      <span className="project-stats-badge">{project.stats}</span>
-                    )}
-                  </div>
-
-                  <span className="project-meta">{project.meta}</span>
-                  <h3 className="project-title">{project.title}</h3>
-                  <span className="project-subtitle">{project.subtitle}</span>
-                  <p className="project-desc">{project.description}</p>
-
-                  <div className="project-tech">
-                    {project.tech.map((t) => (
-                      <span className="badge" key={t}>{t}</span>
-                    ))}
-                  </div>
-
-                  <div className="project-actions">
-                    {project.links.website && (
-                      <a href={project.links.website} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
-                        Visit website
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M7 17L17 7M17 7H7M17 7v10" />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div style={{ marginTop: '2rem', overflow: 'hidden', borderRadius: '16px', display: 'flex', justifyContent: 'center' }}>
+            <InteractiveSelector options={interactiveOptions} />
           </div>
         </div>
       </div>

@@ -7,13 +7,19 @@
 }
 
 .work-header {
-  margin-bottom: 60px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  gap: clamp(28px, 6vw, 80px);
+  align-items: end;
+  margin-bottom: clamp(20px, 4vw, 32px);
 }
 
 .work-header p {
   color: var(--text-secondary);
-  font-size: 1.05rem;
-  max-width: 520px;
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  line-height: 1.8;
+  max-width: none;
+  margin: 0 0 26px;
 }
 
 /* --- Projects Grid --- */
@@ -196,5 +202,17 @@
 @media (prefers-reduced-motion: reduce) {
   .project-card:hover .project-media img {
     transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .work-header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .work-header p {
+    margin-bottom: 0;
+    max-width: 560px;
   }
 }

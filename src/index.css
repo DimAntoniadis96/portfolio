@@ -189,14 +189,14 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 24px;
 }
 
-/* 1st, 3rd, 5th headers (Even sections due to Hero): Blue -> White (Left to Right) */
+/* 1st, 3rd, 5th headers (Even sections due to Hero): Blue -> Text Color (Left to Right) */
 section:nth-of-type(even) .section-heading {
-  background-image: linear-gradient(to right, var(--accent-primary) 0%, #ffffff 100%);
+  background-image: linear-gradient(to right, var(--accent-primary) 0%, var(--text-primary) 100%);
 }
 
-/* 2nd, 4th, 6th headers (Odd sections due to Hero): Blue -> White (Right to Left) */
+/* 2nd, 4th, 6th headers (Odd sections due to Hero): Blue -> Text Color (Right to Left) */
 section:nth-of-type(odd) .section-heading {
-  background-image: linear-gradient(to left, var(--accent-primary) 0%, #ffffff 100%);
+  background-image: linear-gradient(to left, var(--accent-primary) 0%, var(--text-primary) 100%);
 }
 
 /* ---------- Fade-in Animation ---------- */
