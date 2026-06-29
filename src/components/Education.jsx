@@ -38,8 +38,8 @@ export default function Education() {
               <h2 className="section-heading">Education</h2>
 
               <div className="edu-cards">
-                {EDUCATION.map((edu, i) => (
-                  <div className="edu-card" key={i}>
+                {EDUCATION.map((edu) => (
+                  <div className="edu-card" key={edu.degree}>
                     <div className="edu-card-accent" />
                     <div className="edu-card-body">
                       <div className="edu-card-top">
@@ -53,7 +53,7 @@ export default function Education() {
                       </div>
                       <span className="edu-institution">{edu.institution}</span>
                       <div className="edu-meta">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                           <line x1="16" y1="2" x2="16" y2="6"></line>
                           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -61,7 +61,7 @@ export default function Education() {
                         </svg>
                         <span>{edu.period}</span>
                         <span className="edu-meta-sep">·</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                           <circle cx="12" cy="10" r="3"></circle>
                         </svg>
@@ -86,16 +86,23 @@ export default function Education() {
               <h2 className="section-heading">Languages</h2>
 
               <div className="lang-cards">
-                {LANGUAGES.map((lang, i) => (
-                  <div className="lang-card" key={i}>
+                {LANGUAGES.map((lang) => (
+                  <div className="lang-card" key={lang.language}>
                     <div className="lang-top">
                       <span className="lang-name">{lang.language}</span>
                       <span className="lang-level">{lang.level}</span>
                     </div>
-                    <div className="lang-bar-track">
-                      <div 
-                        className="lang-bar-fill" 
-                        style={{ width: `${lang.percentage}%` }} 
+                    <div
+                      className="lang-bar-track"
+                      role="progressbar"
+                      aria-label={`${lang.language} proficiency`}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      aria-valuenow={lang.percentage}
+                    >
+                      <div
+                        className="lang-bar-fill"
+                        style={{ width: `${lang.percentage}%` }}
                       />
                     </div>
                   </div>

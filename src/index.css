@@ -15,7 +15,8 @@
 /* ---------- Theme Variables ---------- */
 :root {
   /* Typography */
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Clash Display', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Spacing */
@@ -170,12 +171,32 @@ body {
 }
 
 /* ---------- Section Heading ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
 .section-heading {
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 800;
-  color: var(--text-heading);
-  line-height: 1.2;
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   margin-bottom: 24px;
+}
+
+/* 1st, 3rd, 5th headers (Even sections due to Hero): Blue -> White (Left to Right) */
+section:nth-of-type(even) .section-heading {
+  background-image: linear-gradient(to right, var(--accent-primary) 0%, #ffffff 100%);
+}
+
+/* 2nd, 4th, 6th headers (Odd sections due to Hero): Blue -> White (Right to Left) */
+section:nth-of-type(odd) .section-heading {
+  background-image: linear-gradient(to left, var(--accent-primary) 0%, #ffffff 100%);
 }
 
 /* ---------- Fade-in Animation ---------- */

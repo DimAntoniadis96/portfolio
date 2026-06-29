@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Experience.css';
 
@@ -47,8 +48,46 @@ const EXPERIENCES = [
   },
 ];
 
+const AUTO_PLAY_DURATION = 6500;
+
+function getExperienceMeta(experience) {
+  return [experience.period, experience.location].filter(Boolean).join(' · ');
+}
+
 export default function Experience() {
   const { ref, isVisible } = useFadeIn();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const activeExperience = EXPERIENCES[activeIndex];
+
+  const handleNext = useCallback(() => {
+    setDirection(1);
+    setActiveIndex((currentIndex) => (currentIndex + 1) % EXPERIENCES.length);
+  }, []);
+
+  const handlePrev = useCallback(() => {
+    setDirection(-1);
+    setActiveIndex((currentIndex) => (
+      currentIndex - 1 + EXPERIENCES.length
+    ) % EXPERIENCES.length);
+  }, []);
+
+  const handleTabClick = (index) => {
+    if (index === activeIndex) return;
+
+    setDirection(index > activeIndex ? 1 : -1);
+    setActiveIndex(index);
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
+    if (isPaused) return undefined;
+
+    const intervalId = window.setInterval(handleNext, AUTO_PLAY_DURATION);
+    return () => window.clearInterval(intervalId);
+  }, [handleNext, isPaused, activeIndex]);
 
   return (
     <section className="experience section" id="experience">
@@ -59,50 +98,93 @@ export default function Experience() {
             <h2 className="section-heading">Where I've Worked</h2>
           </div>
 
-          <div className="exp-zigzag">
-            {/* Central vertical line */}
-            <div className="exp-center-line" />
+          <div
+            className="experience-tabs"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div className="experience-tabs-list" aria-label="Experience timeline">
+              {EXPERIENCES.map((experience, index) => {
+                const isActive = activeIndex === index;
 
-            {EXPERIENCES.map((exp, i) => {
-              const isLeft = i % 2 === 0;
-              return (
-                <div className={`exp-zrow ${isLeft ? 'left' : 'right'}`} key={i}>
-                  {/* Dot on the center line */}
-                  <div className="exp-zdot-wrapper">
-                    <div className={`exp-zdot ${exp.type === 'current' ? 'pulse' : ''}`} />
-                  </div>
-
-                  {/* Card */}
-                  <div className="exp-zcard">
-                    <span className="exp-zperiod">{exp.period} · {exp.location}</span>
-                    <div className="exp-zcard-top">
-                      <h3 className="exp-ztitle">{exp.title}</h3>
-                      {exp.type === 'current' && (
-                        <span className="exp-zbadge">
-                          <span className="exp-zbadge-dot" />
-                          Current
-                        </span>
-                      )}
-                    </div>
-                    <span className="exp-zcompany">
-                      {exp.companyUrl ? (
-                        <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer">
-                          {exp.company} ↗
-                        </a>
-                      ) : (
-                        exp.company
+                return (
+                  <button
+                    type="button"
+                    className={`experience-tab ${isActive ? 'active' : ''}`}
+                    onClick={() => handleTabClick(index)}
+                    onFocus={() => setIsPaused(true)}
+                    onBlur={() => setIsPaused(false)}
+                    aria-pressed={isActive}
+                    key={`${experience.company}-${experience.title}`}
+                  >
+                    <span className="experience-tab-rail" aria-hidden="true">
+                      {isActive && !isPaused && (
+                        <span
+                          className="experience-tab-progress"
+                          key={`${activeIndex}-${isPaused}`}
+                        />
                       )}
                     </span>
-                    <p className="exp-zsummary">{exp.summary}</p>
-                    <div className="exp-ztags">
-                      {exp.tags.map((tag) => (
-                        <span className="exp-ztag" key={tag}>{tag}</span>
-                      ))}
-                    </div>
+
+                    <span className="experience-tab-index">/{String(index + 1).padStart(2, '0')}</span>
+                    <span className="experience-tab-copy">
+                      <span className="experience-tab-title">{experience.title}</span>
+                      <span className="experience-tab-company">{experience.company}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <article
+              className={`experience-panel ${direction > 0 ? 'from-next' : 'from-prev'}`}
+              key={`${activeExperience.company}-${activeExperience.title}`}
+            >
+              <div className="experience-panel-inner">
+                <div className="experience-panel-topline">
+                  <span>{getExperienceMeta(activeExperience)}</span>
+                  {activeExperience.type === 'current' && (
+                    <span className="experience-current-badge">
+                      <span className="experience-current-dot" />
+                      Current
+                    </span>
+                  )}
+                </div>
+
+                <div className="experience-panel-main">
+                  <span className="experience-panel-number">{String(activeIndex + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h3>{activeExperience.title}</h3>
+                    <p className="experience-panel-company">
+                      {activeExperience.companyUrl ? (
+                        <a href={activeExperience.companyUrl} target="_blank" rel="noopener noreferrer">
+                          {activeExperience.company} ↗
+                        </a>
+                      ) : (
+                        activeExperience.company
+                      )}
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+
+                <p className="experience-panel-summary">{activeExperience.summary}</p>
+
+                <div className="experience-panel-tags">
+                  {activeExperience.tags.map((tag) => (
+                    <span className="experience-panel-tag" key={tag}>{tag}</span>
+                  ))}
+                </div>
+
+                <div className="experience-panel-actions">
+                  <button type="button" onClick={handlePrev} aria-label="Previous experience">
+                    <span aria-hidden="true">←</span>
+                  </button>
+                  <button type="button" onClick={handleNext} aria-label="Next experience">
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </div>
