@@ -183,6 +183,9 @@ export default function Feedback() {
   const [isLoadingReviews, setIsLoadingReviews] = useState(Boolean(REVIEWS_API_BASE_URL));
   const [statusMessage, setStatusMessage] = useState('');
 
+  const [isPollingVisible, setIsPollingVisible] = useState(false);
+  const hasFetchedInitially = useRef(false);
+
   const resolveCollisions = useCallback((currentNotes, fixedId = null) => {
     if (!boardRef.current) return currentNotes;
     const boardRect = boardRef.current.getBoundingClientRect();
@@ -289,12 +292,27 @@ export default function Feedback() {
   }, [notes]);
 
   useEffect(() => {
+    const el = boardRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsPollingVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!REVIEWS_API_BASE_URL) return undefined;
 
     let isActive = true;
 
-    async function loadReviews() {
-      setIsLoadingReviews(true);
+    async function loadReviews(isInitial) {
+      if (isInitial) setIsLoadingReviews(true);
 
       try {
         const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`);
@@ -307,25 +325,36 @@ export default function Feedback() {
 
         if (isActive) {
           setNotes((currentNotes) => buildNotesFromReviews(reviews, currentNotes));
-          setStatusMessage('');
+          if (isInitial) setStatusMessage('');
         }
       } catch {
-        if (isActive) {
+        if (isActive && isInitial) {
           setStatusMessage('The live guestbook is not connected yet. Check the API deployment and environment variables.');
         }
       } finally {
-        if (isActive) {
+        if (isActive && isInitial) {
           setIsLoadingReviews(false);
         }
       }
     }
 
-    loadReviews();
+    if (!hasFetchedInitially.current) {
+      loadReviews(true);
+      hasFetchedInitially.current = true;
+    }
+
+    let intervalId;
+    if (isPollingVisible) {
+      intervalId = setInterval(() => {
+        loadReviews(false);
+      }, 10000); // Poll every 10 seconds when visible
+    }
 
     return () => {
       isActive = false;
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [buildNotesFromReviews]);
+  }, [buildNotesFromReviews, isPollingVisible]);
 
   useEffect(() => {
     const handleResize = () => {
