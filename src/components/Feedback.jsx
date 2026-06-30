@@ -184,7 +184,10 @@ export default function Feedback() {
   const [statusMessage, setStatusMessage] = useState('');
 
   const [isPollingVisible, setIsPollingVisible] = useState(false);
+  const [isTabVisible, setIsTabVisible] = useState(true);
+  const [isIdle, setIsIdle] = useState(false);
   const hasFetchedInitially = useRef(false);
+  const consecutiveErrors = useRef(0);
 
   const resolveCollisions = useCallback((currentNotes, fixedId = null) => {
     if (!boardRef.current) return currentNotes;
@@ -307,15 +310,59 @@ export default function Feedback() {
   }, []);
 
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabVisible(!document.hidden);
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    handleVisibilityChange();
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    let idleTimer;
+    const resetIdleTimer = () => {
+      setIsIdle(false);
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => setIsIdle(true), 2 * 60 * 1000); // 2 minutes
+    };
+
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
+    events.forEach(e => window.addEventListener(e, resetIdleTimer, { passive: true }));
+    
+    resetIdleTimer();
+
+    return () => {
+      clearTimeout(idleTimer);
+      events.forEach(e => window.removeEventListener(e, resetIdleTimer));
+    };
+  }, []);
+
+  useEffect(() => {
     if (!REVIEWS_API_BASE_URL) return undefined;
 
     let isActive = true;
+    let abortController = null;
 
     async function loadReviews(isInitial) {
+      if (!navigator.onLine) return; // Offline detection
+
+      // Circuit breaker: pause if we've failed 3 times in a row
+      if (consecutiveErrors.current >= 3) {
+        if (isActive) setStatusMessage('Live guestbook connection paused due to repeated errors. Please refresh.');
+        return;
+      }
+
+      if (abortController) {
+        abortController.abort(); // Cancel previous request
+      }
+      abortController = new AbortController();
+
       if (isInitial) setIsLoadingReviews(true);
 
       try {
-        const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`);
+        const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`, {
+          signal: abortController.signal
+        });
         if (!response.ok) {
           throw new Error(`Reviews API responded with ${response.status}`);
         }
@@ -324,12 +371,18 @@ export default function Feedback() {
         const reviews = Array.isArray(data.reviews) ? data.reviews : [];
 
         if (isActive) {
+          consecutiveErrors.current = 0; // Success! Reset circuit breaker
           setNotes((currentNotes) => buildNotesFromReviews(reviews, currentNotes));
           if (isInitial) setStatusMessage('');
         }
-      } catch {
+      } catch (error) {
+        if (error.name === 'AbortError') return; // Ignore intentional aborts
+
+        consecutiveErrors.current += 1;
         if (isActive && isInitial) {
           setStatusMessage('The live guestbook is not connected yet. Check the API deployment and environment variables.');
+        } else if (isActive && consecutiveErrors.current >= 3) {
+          setStatusMessage('Live guestbook connection paused due to repeated errors. Please refresh.');
         }
       } finally {
         if (isActive && isInitial) {
@@ -344,17 +397,18 @@ export default function Feedback() {
     }
 
     let intervalId;
-    if (isPollingVisible) {
+    if (isPollingVisible && isTabVisible && !isIdle) {
       intervalId = setInterval(() => {
         loadReviews(false);
-      }, 10000); // Poll every 10 seconds when visible
+      }, 20000); // Poll every 20 seconds when active
     }
 
     return () => {
       isActive = false;
+      if (abortController) abortController.abort();
       if (intervalId) clearInterval(intervalId);
     };
-  }, [buildNotesFromReviews, isPollingVisible]);
+  }, [buildNotesFromReviews, isPollingVisible, isTabVisible, isIdle]);
 
   useEffect(() => {
     const handleResize = () => {
