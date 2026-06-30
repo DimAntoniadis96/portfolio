@@ -11,8 +11,16 @@ const NOTE_MARGIN = 12;
 const BOARD_EDGE_PADDING = 16;
 const BOARD_HINT_SAFE_AREA = 70;
 const AUTHOR_MAX_LENGTH = 24;
+const AUTHOR_ID_MAX_LENGTH = 80;
 const MESSAGE_MAX_LENGTH = 180;
+const NOTE_DATE_MAX_LENGTH = 16;
+const MAX_NOTES = 36;
 const KEYBOARD_STEP = 12;
+const POLL_INTERVAL_MS = 20000;
+const IDLE_TIMEOUT_MS = 2 * 60 * 1000;
+const REVIEWS_REQUEST_TIMEOUT_MS = 10000;
+const MAX_CONSECUTIVE_ERRORS = 3;
+const ERROR_PAUSE_MS = 60 * 1000;
 const REVIEWS_API_BASE_URL = (import.meta.env.VITE_REVIEWS_API_BASE_URL || '').trim().replace(/\/+$/, '');
 
 function clamp(value, min, max) {
@@ -24,11 +32,13 @@ function clampNoteToBoard(note, boardRect) {
   const maxY = Math.max(0, boardRect.height - NOTE_HEIGHT - BOARD_HINT_SAFE_AREA);
   const minX = maxX > BOARD_EDGE_PADDING ? BOARD_EDGE_PADDING : 0;
   const minY = maxY > BOARD_EDGE_PADDING ? BOARD_EDGE_PADDING : 0;
+  const x = Number.isFinite(note.x) ? note.x : minX;
+  const y = Number.isFinite(note.y) ? note.y : minY;
 
   return {
     ...note,
-    x: clamp(note.x, minX, maxX),
-    y: clamp(note.y, minY, maxY),
+    x: clamp(x, minX, maxX),
+    y: clamp(y, minY, maxY),
   };
 }
 
@@ -48,6 +58,10 @@ function getNoteAnimationDelay(id) {
 function sanitizeText(value, maxLength) {
   if (typeof value !== 'string') return '';
   return value.trim().slice(0, maxLength);
+}
+
+function isFinitePosition(value) {
+  return value && typeof value === 'object' && Number.isFinite(value.x) && Number.isFinite(value.y);
 }
 
 function formatNoteDate(value = new Date()) {
@@ -86,7 +100,7 @@ function getStoredAuthorId() {
   if (typeof window === 'undefined') return createId();
 
   try {
-    const existingId = window.localStorage.getItem(AUTHOR_ID_STORAGE_KEY);
+    const existingId = sanitizeText(window.localStorage.getItem(AUTHOR_ID_STORAGE_KEY), AUTHOR_ID_MAX_LENGTH);
     if (existingId) return existingId;
 
     const nextId = createId();
@@ -107,7 +121,13 @@ function getStoredNotePositions() {
     const parsedPositions = JSON.parse(storedPositions);
     if (!parsedPositions || typeof parsedPositions !== 'object') return {};
 
-    return parsedPositions;
+    return Object.entries(parsedPositions).reduce((positions, [id, position]) => {
+      if (isFinitePosition(position)) {
+        positions[String(id)] = { x: position.x, y: position.y };
+      }
+
+      return positions;
+    }, {});
   } catch {
     return {};
   }
@@ -129,6 +149,35 @@ function storeNotePositions(notes) {
   } catch {
     // Dragging still works if storage is unavailable.
   }
+}
+
+function getRenderableReviews(reviews) {
+  if (!Array.isArray(reviews)) return [];
+
+  const seenIds = new Set();
+
+  return reviews.reduce((safeReviews, review) => {
+    if (!review || typeof review !== 'object' || safeReviews.length >= MAX_NOTES) {
+      return safeReviews;
+    }
+
+    const id = String(review.id || createId());
+    const body = sanitizeText(review.body, MESSAGE_MAX_LENGTH);
+
+    if (!body || seenIds.has(id)) {
+      return safeReviews;
+    }
+
+    seenIds.add(id);
+    safeReviews.push({
+      id,
+      alias: sanitizeText(review.alias, AUTHOR_MAX_LENGTH) || 'Visitor',
+      body,
+      createdAt: review.createdAt,
+    });
+
+    return safeReviews;
+  }, []);
 }
 
 function createNoteFromReview(review, position) {
@@ -162,7 +211,13 @@ function getStoredNotes() {
       typeof note.text === 'string' &&
       Number.isFinite(note.x) &&
       Number.isFinite(note.y)
-    )).map((note) => ({ ...note, id: String(note.id) }));
+    )).map((note) => ({
+      ...note,
+      id: String(note.id),
+      author: sanitizeText(note.author, AUTHOR_MAX_LENGTH) || 'Visitor',
+      date: sanitizeText(note.date, NOTE_DATE_MAX_LENGTH) || formatNoteDate(),
+      text: sanitizeText(note.text, MESSAGE_MAX_LENGTH),
+    })).filter((note) => note.text).slice(0, MAX_NOTES);
   } catch {
     return [];
   }
@@ -185,9 +240,13 @@ export default function Feedback() {
 
   const [isPollingVisible, setIsPollingVisible] = useState(false);
   const [isTabVisible, setIsTabVisible] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine));
   const [isIdle, setIsIdle] = useState(false);
   const hasFetchedInitially = useRef(false);
+  const lastFetchAt = useRef(0);
   const consecutiveErrors = useRef(0);
+  const errorPauseUntil = useRef(0);
+  const optimisticNotes = useRef(new Map());
 
   const resolveCollisions = useCallback((currentNotes, fixedId = null) => {
     if (!boardRef.current) return currentNotes;
@@ -265,8 +324,13 @@ export default function Feedback() {
     const existingNotes = new Map(currentNotes.map((note) => [String(note.id), note]));
     const storedPositions = getStoredNotePositions();
 
-    const reviewNotes = reviews.map((review, index) => {
-      const id = String(review.id || createId());
+    const renderableReviews = getRenderableReviews(reviews);
+    const reviewIds = new Set(renderableReviews.map((review) => String(review.id)));
+
+    reviewIds.forEach((id) => optimisticNotes.current.delete(id));
+
+    const reviewNotes = renderableReviews.map((review, index) => {
+      const id = review.id;
       const savedPosition = storedPositions[id];
       const existingNote = existingNotes.get(id);
       const defaultPosition = getDefaultNotePosition(index, boardRect);
@@ -277,8 +341,10 @@ export default function Feedback() {
 
       return createNoteFromReview({ ...review, id }, position);
     });
+    const pendingNotes = Array.from(optimisticNotes.current.values())
+      .filter((note) => !reviewIds.has(String(note.id)));
 
-    return resolveCollisions(reviewNotes);
+    return resolveCollisions([...reviewNotes, ...pendingNotes].slice(0, MAX_NOTES));
   }, [resolveCollisions]);
 
   useEffect(() => {
@@ -319,11 +385,29 @@ export default function Feedback() {
   }, []);
 
   useEffect(() => {
+    const handleOnline = () => {
+      consecutiveErrors.current = 0;
+      errorPauseUntil.current = 0;
+      setIsOnline(true);
+    };
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    setIsOnline(typeof navigator === 'undefined' ? true : navigator.onLine);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
     let idleTimer;
     const resetIdleTimer = () => {
       setIsIdle(false);
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => setIsIdle(true), 2 * 60 * 1000); // 2 minutes
+      idleTimer = setTimeout(() => setIsIdle(true), IDLE_TIMEOUT_MS);
     };
 
     const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
@@ -342,26 +426,50 @@ export default function Feedback() {
 
     let isActive = true;
     let abortController = null;
+    const shouldPoll = isPollingVisible && isTabVisible && isOnline && !isIdle;
 
-    async function loadReviews(isInitial) {
-      if (!navigator.onLine) return; // Offline detection
-
-      // Circuit breaker: pause if we've failed 3 times in a row
-      if (consecutiveErrors.current >= 3) {
-        if (isActive) setStatusMessage('Live guestbook connection paused due to repeated errors. Please refresh.');
+    async function loadReviews(isInitial, force = false) {
+      if (!isOnline) {
+        if (isActive && isInitial) {
+          setIsLoadingReviews(false);
+          setStatusMessage('You appear to be offline. The live guestbook will reconnect when your network is back.');
+        }
         return;
       }
 
+      const now = Date.now();
+      if (!force && now - lastFetchAt.current < 1000) return;
+
+      if (errorPauseUntil.current > now) {
+        if (isActive) {
+          setStatusMessage('Live guestbook connection is cooling down after repeated errors. It will retry shortly.');
+        }
+        return;
+      }
+      if (errorPauseUntil.current && errorPauseUntil.current <= now) {
+        errorPauseUntil.current = 0;
+        consecutiveErrors.current = 0;
+      }
+
       if (abortController) {
-        abortController.abort(); // Cancel previous request
+        abortController.abort();
       }
       abortController = new AbortController();
+      const requestController = abortController;
+      let didRequestTimeout = false;
+      const requestTimeout = window.setTimeout(() => {
+        didRequestTimeout = true;
+        requestController.abort();
+      }, REVIEWS_REQUEST_TIMEOUT_MS);
+
+      lastFetchAt.current = now;
 
       if (isInitial) setIsLoadingReviews(true);
 
       try {
         const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`, {
-          signal: abortController.signal
+          headers: { Accept: 'application/json' },
+          signal: requestController.signal,
         });
         if (!response.ok) {
           throw new Error(`Reviews API responded with ${response.status}`);
@@ -371,44 +479,49 @@ export default function Feedback() {
         const reviews = Array.isArray(data.reviews) ? data.reviews : [];
 
         if (isActive) {
-          consecutiveErrors.current = 0; // Success! Reset circuit breaker
+          hasFetchedInitially.current = true;
+          consecutiveErrors.current = 0;
+          errorPauseUntil.current = 0;
           setNotes((currentNotes) => buildNotesFromReviews(reviews, currentNotes));
           if (isInitial) setStatusMessage('');
         }
       } catch (error) {
-        if (error.name === 'AbortError') return; // Ignore intentional aborts
+        if (error.name === 'AbortError' && !didRequestTimeout) return;
 
         consecutiveErrors.current += 1;
         if (isActive && isInitial) {
-          setStatusMessage('The live guestbook is not connected yet. Check the API deployment and environment variables.');
-        } else if (isActive && consecutiveErrors.current >= 3) {
-          setStatusMessage('Live guestbook connection paused due to repeated errors. Please refresh.');
+          setStatusMessage(didRequestTimeout
+            ? 'The live guestbook request timed out. It will retry while this section is active.'
+            : 'The live guestbook is not connected yet. Check the API deployment and environment variables.');
+        } else if (isActive && consecutiveErrors.current >= MAX_CONSECUTIVE_ERRORS) {
+          errorPauseUntil.current = Date.now() + ERROR_PAUSE_MS;
+          setStatusMessage('Live guestbook connection paused after repeated errors. It will retry in a minute.');
         }
       } finally {
+        window.clearTimeout(requestTimeout);
+        if (abortController === requestController) {
+          abortController = null;
+        }
         if (isActive && isInitial) {
           setIsLoadingReviews(false);
         }
       }
     }
 
-    if (!hasFetchedInitially.current) {
-      loadReviews(true);
-      hasFetchedInitially.current = true;
-    }
+    if (!shouldPoll) return undefined;
 
-    let intervalId;
-    if (isPollingVisible && isTabVisible && !isIdle) {
-      intervalId = setInterval(() => {
-        loadReviews(false);
-      }, 20000); // Poll every 20 seconds when active
-    }
+    loadReviews(!hasFetchedInitially.current, true);
+
+    const intervalId = setInterval(() => {
+      loadReviews(false);
+    }, POLL_INTERVAL_MS);
 
     return () => {
       isActive = false;
       if (abortController) abortController.abort();
-      if (intervalId) clearInterval(intervalId);
+      clearInterval(intervalId);
     };
-  }, [buildNotesFromReviews, isPollingVisible, isTabVisible, isIdle]);
+  }, [buildNotesFromReviews, isPollingVisible, isTabVisible, isOnline, isIdle]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -497,8 +610,8 @@ export default function Feedback() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const trimmedAuthor = author.trim();
-    const trimmedMessage = message.trim();
+    const trimmedAuthor = sanitizeText(author, AUTHOR_MAX_LENGTH);
+    const trimmedMessage = sanitizeText(message, MESSAGE_MAX_LENGTH);
 
     if (!trimmedMessage || !trimmedAuthor) {
       setStatusMessage('Add your name and a short note before posting.');
@@ -529,11 +642,20 @@ export default function Feedback() {
       return;
     }
 
+    let submitTimeout;
+    let didSubmitTimeout = false;
+
     try {
       const reviewId = createId();
+      const submitController = new AbortController();
+      submitTimeout = window.setTimeout(() => {
+        didSubmitTimeout = true;
+        submitController.abort();
+      }, REVIEWS_REQUEST_TIMEOUT_MS);
       const response = await fetch(`${REVIEWS_API_BASE_URL}/reviews`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        signal: submitController.signal,
         body: JSON.stringify({
           id: reviewId,
           alias: trimmedAuthor,
@@ -555,14 +677,21 @@ export default function Feedback() {
         createdAt: new Date().toISOString(),
       };
       const newNote = createNoteFromReview(review, spawnPosition);
+      optimisticNotes.current.set(String(newNote.id), newNote);
 
-      setNotes((currentNotes) => resolveCollisions([...currentNotes, newNote], newNote.id));
+      setNotes((currentNotes) => {
+        const withoutDuplicate = currentNotes.filter((note) => String(note.id) !== String(newNote.id));
+        return resolveCollisions([...withoutDuplicate, newNote], newNote.id);
+      });
       setMessage('');
       setAuthor('');
       setStatusMessage(`Thanks, ${trimmedAuthor}. Your note is live on the wall.`);
     } catch {
-      setStatusMessage('I could not save this online yet. Check the reviews API deployment and try again.');
+      setStatusMessage(didSubmitTimeout
+        ? 'Saving timed out. Please try again while the API is reachable.'
+        : 'I could not save this online yet. Check the reviews API deployment and try again.');
     } finally {
+      if (submitTimeout) window.clearTimeout(submitTimeout);
       setIsSubmitting(false);
     }
   };
