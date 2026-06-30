@@ -240,22 +240,22 @@ const InteractiveSelector = ({ options = [] }) => {
                   )}
                 </div>
 
-                <div
+                  <div
                   id={`compact-project-details-${index}`}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: compactDetailsHidden ? '0' : '14px',
-                    padding: compactDetailsHidden ? '12px' : '18px',
+                    gap: compactDetailsHidden ? '8px' : '14px',
+                    padding: compactDetailsHidden ? '0' : '18px',
                     borderRadius: '18px',
                     background: compactDetailsHidden
-                      ? 'linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.54))'
+                      ? 'transparent'
                       : 'linear-gradient(180deg, rgba(0,0,0,0.34), rgba(0,0,0,0.68))',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
-                    boxShadow: '0 16px 48px rgba(0,0,0,0.35)',
-                    transition: 'padding 0.24s ease, background 0.24s ease',
+                    border: compactDetailsHidden ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                    backdropFilter: compactDetailsHidden ? 'none' : 'blur(8px)',
+                    WebkitBackdropFilter: compactDetailsHidden ? 'none' : 'blur(8px)',
+                    boxShadow: compactDetailsHidden ? 'none' : '0 16px 48px rgba(0,0,0,0.35)',
+                    transition: 'all 0.24s ease',
                   }}
                 >
                   {!compactDetailsHidden && (
