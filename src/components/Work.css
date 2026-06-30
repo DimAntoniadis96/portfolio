@@ -22,6 +22,14 @@
   margin: 0 0 26px;
 }
 
+.work-selector-shell {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  border-radius: var(--radius-lg);
+  overflow: visible;
+}
+
 /* --- Projects Grid --- */
 .work-grid {
   display: grid;
@@ -185,6 +193,10 @@
 }
 
 @media (max-width: 640px) {
+  .work-selector-shell {
+    margin-top: 1.25rem;
+  }
+
   .project-body {
     padding-left: 20px;
     padding-right: 20px;

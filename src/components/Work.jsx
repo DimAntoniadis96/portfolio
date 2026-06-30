@@ -109,7 +109,7 @@ export default function Work() {
             <p>Selected products and client websites I've designed, built, and shipped.</p>
           </div>
 
-          <div style={{ marginTop: '2rem', overflow: 'hidden', borderRadius: '16px', display: 'flex', justifyContent: 'center' }}>
+          <div className="work-selector-shell">
             <InteractiveSelector options={interactiveOptions} />
           </div>
         </div>
