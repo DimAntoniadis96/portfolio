@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const COMPACT_LAYOUT_QUERY = '(max-width: 700px)';
+const COMPACT_LAYOUT_QUERY = '(max-width: 1024px)';
 
 function useCompactProjectLayout() {
   const [isCompact, setIsCompact] = useState(() => {
@@ -21,29 +21,43 @@ function useCompactProjectLayout() {
   return isCompact;
 }
 
-const InteractiveSelector = ({ options = [] }) => {
+export interface InteractiveSelectorOption {
+  title: string;
+  image: string;
+  icon: React.ReactElement<any>;
+  stats?: string;
+  description: string;
+  tags?: string[];
+  url?: string;
+}
+
+interface InteractiveSelectorProps {
+  options?: InteractiveSelectorOption[];
+}
+
+const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [animatedOptions, setAnimatedOptions] = useState([]);
+  const [animatedOptions, setAnimatedOptions] = useState<number[]>([]);
   const [compactDetailsHidden, setCompactDetailsHidden] = useState(false);
   const isCompactLayout = useCompactProjectLayout();
   const optionCount = options.length;
-  const compactScrollerRef = useRef(null);
-  const compactScrollFrame = useRef(0);
+  const compactScrollerRef = useRef<HTMLDivElement>(null);
+  const compactScrollFrame = useRef<number>(0);
 
-  const handleOptionClick = (index) => {
+  const handleOptionClick = (index: number) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
     }
   };
 
-  const handleOptionKeyDown = (event, index) => {
+  const handleOptionKeyDown = (event: React.KeyboardEvent, index: number) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handleOptionClick(index);
     }
   };
 
-  const scrollToCompactProject = (index) => {
+  const scrollToCompactProject = (index: number) => {
     setActiveIndex(index);
 
     const scroller = compactScrollerRef.current;
@@ -69,8 +83,9 @@ const InteractiveSelector = ({ options = [] }) => {
 
       const scrollerCenter = scroller.scrollLeft + (scroller.clientWidth / 2);
       const nextIndex = Array.from(scroller.children).reduce((closestIndex, child, index) => {
-        const currentClosest = scroller.children[closestIndex];
-        const childCenter = child.offsetLeft + (child.clientWidth / 2);
+        const currentClosest = scroller.children[closestIndex] as HTMLElement;
+        const childHtml = child as HTMLElement;
+        const childCenter = childHtml.offsetLeft + (childHtml.clientWidth / 2);
         const closestCenter = currentClosest.offsetLeft + (currentClosest.clientWidth / 2);
 
         return Math.abs(childCenter - scrollerCenter) < Math.abs(closestCenter - scrollerCenter)
@@ -84,7 +99,7 @@ const InteractiveSelector = ({ options = [] }) => {
   };
 
   useEffect(() => {
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     setAnimatedOptions([]);
 
     Array.from({ length: optionCount }).forEach((_, i) => {
@@ -622,8 +637,8 @@ const InteractiveSelector = ({ options = [] }) => {
                 position: 'relative',
                 display: 'flex',
                 justifyContent: 'space-between',
-                width: '680px', // Fixed width stops spreading during transition
-                minWidth: '680px',
+                flex: 1, // Expand to fill the full width of the card
+                minWidth: '600px', // Prevent text reflow on collapse
                 flexShrink: 0,
                 pointerEvents: activeIndex === index ? 'auto' : 'none',
                 alignItems: 'flex-end',
@@ -638,8 +653,9 @@ const InteractiveSelector = ({ options = [] }) => {
                   width: '180px',
                   flexShrink: 0,
                   transition: 'opacity 0.2s ease-out, transform 0.4s ease-out',
-                  opacity: activeIndex === index ? 1 : 0,
-                  transform: activeIndex === index ? 'translateX(0)' : 'translateX(-10px)',
+                  opacity: (activeIndex === index && !compactDetailsHidden) ? 1 : 0,
+                  transform: (activeIndex === index && !compactDetailsHidden) ? 'translateX(0)' : 'translateX(-10px)',
+                  pointerEvents: compactDetailsHidden ? 'none' : 'auto'
                 }}>
                   {/* DESCRIPTION CONTAINER */}
                   <div style={{ position: 'relative' }}>
@@ -739,20 +755,58 @@ const InteractiveSelector = ({ options = [] }) => {
                       </svg>
                     </a>
                   )}
+
+                  {/* DESKTOP TOGGLE BUTTON */}
+                  <button
+                    type="button"
+                    aria-controls={`desktop-project-details-${index}`}
+                    aria-expanded={!compactDetailsHidden}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCompactDetailsHidden(prev => !prev);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      padding: '6px 16px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      fontSize: '0.8rem',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      transition: 'all 0.2s ease',
+                      pointerEvents: activeIndex === index ? 'auto' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                      e.currentTarget.style.color = '#fff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+                    }}
+                  >
+                    {compactDetailsHidden ? 'Show details' : 'Hide details'}
+                  </button>
                 </div>
 
                 {/* RIGHT COLUMN: Tags/Skills */}
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'flex-end', // Stack tags from the bottom up
-                  width: '120px', // Exact 1/6th fixed width approx
+                  alignItems: 'flex-end', // Align tags to the right edge
+                  justifyContent: 'flex-end', // Stack from the bottom
+                  width: '180px', 
+                  maxHeight: '100%', // Allow it to grow up to the container height
                   flexShrink: 0,
                   gap: '6px',
                   transition: 'opacity 0.2s ease-out, transform 0.4s ease-out',
-                  opacity: activeIndex === index ? 1 : 0,
-                  transform: activeIndex === index ? 'translateX(0)' : 'translateX(10px)',
+                  opacity: (activeIndex === index && !compactDetailsHidden) ? 1 : 0,
+                  transform: (activeIndex === index && !compactDetailsHidden) ? 'translateX(0)' : 'translateX(10px)',
+                  pointerEvents: compactDetailsHidden ? 'none' : 'auto'
                 }}>
                   {option.tags && option.tags.map((tag, i) => (
                     <span key={i} style={{
