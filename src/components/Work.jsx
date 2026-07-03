@@ -12,7 +12,7 @@ const PROJECTS = [
     subtitle: 'Lofi Pomodoro & Study Timer',
     meta: 'Web, Desktop & Discord Platform',
     image: {
-      src: '/projects/study-saga.png',
+      src: '/projects/study-saga.jpg',
       alt: 'Study Saga landing page with a lofi pomodoro study timer hero',
       ratio: '2856 / 1498',
     },
@@ -29,7 +29,7 @@ const PROJECTS = [
     subtitle: 'Football academy website',
     meta: 'Sports Academy Landing Page',
     image: {
-      src: '/projects/pox-academy.png',
+      src: '/projects/pox-academy.jpg',
       alt: 'POX Academy football academy landing page',
       ratio: '2864 / 1472',
     },
@@ -46,7 +46,7 @@ const PROJECTS = [
     subtitle: 'Cocktail & pizza bar landing page',
     meta: 'Hospitality Landing Page',
     image: {
-      src: '/projects/routina.png',
+      src: '/projects/routina.jpg',
       alt: 'Routina cocktail and pizza bar landing page',
       fit: 'contain',
       ratio: '2850 / 1350',

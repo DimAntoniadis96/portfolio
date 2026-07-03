@@ -78,7 +78,7 @@ export default function Hero() {
                 <div className="front">
                   <div className="photo-tint"></div>
                   <img
-                    src="/photo_me.jpg"
+                    src="/image_me.jpg"
                     alt="Dimitrios Antoniadis"
                     className="hero-photo"
                     loading="eager"

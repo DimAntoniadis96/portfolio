@@ -19,10 +19,11 @@ export default function Navbar({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  const lastScrollY = useRef(0);
   const ticking = useRef(false);
   const indicatorRef = useRef(null);
   const navLinksRef = useRef(null);
+  const isProgrammaticScroll = useRef(false);
+  const scrollTimeout = useRef(null);
 
   // ── Active section detection ──
   useEffect(() => {
@@ -45,6 +46,7 @@ export default function Navbar({ theme, toggleTheme }) {
 
     const updateActiveSection = () => {
       frameId = null;
+      if (isProgrammaticScroll.current) return;
       const next = getActiveSection();
       setActiveSection((cur) => (cur === next ? cur : next));
     };
@@ -129,8 +131,17 @@ export default function Navbar({ theme, toggleTheme }) {
     if (el) {
       const navHeight = 56;
       const top = el.getBoundingClientRect().top + window.scrollY;
+      
+      isProgrammaticScroll.current = true;
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+      
       setActiveSection(href);
       window.scrollTo({ top: Math.max(top - navHeight - 16, 0), behavior: 'smooth' });
+      
+      scrollTimeout.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 1000);
+
       if (e.detail > 0) e.currentTarget.blur();
       setMobileOpen(false);
     }
@@ -147,7 +158,7 @@ export default function Navbar({ theme, toggleTheme }) {
         {/* Inner container */}
         <div className="navbar-inner">
           {/* Logo / Brand */}
-          <a href="#about" className="navbar-brand" onClick={(e) => handleNavClick(e, '#about')}>
+          <a href="#hero" className="navbar-brand" onClick={(e) => handleNavClick(e, '#hero')}>
             DA
           </a>
 

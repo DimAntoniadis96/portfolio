@@ -47,58 +47,32 @@
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 10px;
   width: 100%;
-  padding: 10px 0 10px 16px;
+  padding: 16px;
   color: var(--text-tertiary);
   text-align: left;
   background: transparent;
-  border: 0;
-  border-top: 1px solid var(--border-color);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: color var(--transition-base), padding-left var(--transition-base);
-}
-
-.experience-tab:first-child {
-  border-top: 0;
+  transition: all var(--transition-base);
 }
 
 .experience-tab:hover,
-.experience-tab:focus-visible,
+.experience-tab:focus-visible {
+  color: var(--text-heading);
+  background: var(--accent-glow);
+}
+
 .experience-tab.active {
   color: var(--text-heading);
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-card);
 }
 
 .experience-tab:focus-visible {
   outline: 1px solid var(--accent-primary);
-  outline-offset: 8px;
-}
-
-.experience-tab.active {
-  padding-left: 20px;
-}
-
-.experience-tab-rail {
-  position: absolute;
-  left: 0;
-  top: 10px;
-  bottom: 10px;
-  width: 2px;
-  overflow: hidden;
-  background: var(--border-color);
-  border-radius: var(--radius-full);
-}
-
-.experience-tab-progress {
-  position: absolute;
-  inset: 0;
-  background: var(--accent-primary);
-  box-shadow: 0 0 18px rgba(137, 207, 240, 0.35);
-  transform-origin: top;
-  animation: experience-progress 6.5s linear forwards;
-}
-
-@keyframes experience-progress {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+  outline-offset: 4px;
 }
 
 .experience-tab-index {
@@ -370,24 +344,17 @@
   }
 
   .experience-tab {
-    flex: 0 0 min(230px, 78vw);
+    flex: 0 0 min(240px, 78vw);
     width: auto;
-    padding: 12px 14px 12px 18px;
-    border-top: 0;
-    border-left: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.02);
+    padding: 14px 16px;
     scroll-snap-align: start;
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.02);
   }
 
   .experience-tab.active {
-    padding-left: 20px;
-    border-color: rgba(137, 207, 240, 0.24);
-    background: rgba(137, 207, 240, 0.06);
-  }
-
-  .experience-tab:focus-visible {
-    outline-offset: 3px;
+    background: var(--bg-card);
+    border-color: var(--border-accent);
   }
 
   .experience-panel {
@@ -417,7 +384,7 @@
   }
 
   .experience-tab.active {
-    padding-left: 18px;
+    background: var(--bg-card);
   }
 
   .experience-tab-title {

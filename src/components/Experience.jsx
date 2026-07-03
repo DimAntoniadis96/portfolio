@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Experience.css';
 
@@ -48,7 +48,7 @@ const EXPERIENCES = [
   },
 ];
 
-const AUTO_PLAY_DURATION = 6500;
+
 
 function getExperienceMeta(experience) {
   return [experience.period, experience.location].filter(Boolean).join(' · ');
@@ -58,36 +58,29 @@ export default function Experience() {
   const { ref, isVisible } = useFadeIn();
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [isPaused, setIsPaused] = useState(false);
 
   const activeExperience = EXPERIENCES[activeIndex];
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     setDirection(1);
     setActiveIndex((currentIndex) => (currentIndex + 1) % EXPERIENCES.length);
-  }, []);
+  };
 
-  const handlePrev = useCallback(() => {
+  const handlePrev = () => {
     setDirection(-1);
     setActiveIndex((currentIndex) => (
       currentIndex - 1 + EXPERIENCES.length
     ) % EXPERIENCES.length);
-  }, []);
+  };
 
   const handleTabClick = (index) => {
     if (index === activeIndex) return;
 
     setDirection(index > activeIndex ? 1 : -1);
     setActiveIndex(index);
-    setIsPaused(false);
   };
 
-  useEffect(() => {
-    if (isPaused) return undefined;
 
-    const intervalId = window.setInterval(handleNext, AUTO_PLAY_DURATION);
-    return () => window.clearInterval(intervalId);
-  }, [handleNext, isPaused, activeIndex]);
 
   return (
     <section className="experience section" id="experience">
@@ -98,11 +91,7 @@ export default function Experience() {
             <h2 className="section-heading">Where I've Worked</h2>
           </div>
 
-          <div
-            className="experience-tabs"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
+          <div className="experience-tabs">
             <div className="experience-tabs-list" aria-label="Experience timeline">
               {EXPERIENCES.map((experience, index) => {
                 const isActive = activeIndex === index;
@@ -112,20 +101,9 @@ export default function Experience() {
                     type="button"
                     className={`experience-tab ${isActive ? 'active' : ''}`}
                     onClick={() => handleTabClick(index)}
-                    onFocus={() => setIsPaused(true)}
-                    onBlur={() => setIsPaused(false)}
                     aria-pressed={isActive}
                     key={`${experience.company}-${experience.title}`}
                   >
-                    <span className="experience-tab-rail" aria-hidden="true">
-                      {isActive && !isPaused && (
-                        <span
-                          className="experience-tab-progress"
-                          key={`${activeIndex}-${isPaused}`}
-                        />
-                      )}
-                    </span>
-
                     <span className="experience-tab-index">/{String(index + 1).padStart(2, '0')}</span>
                     <span className="experience-tab-copy">
                       <span className="experience-tab-title">{experience.title}</span>

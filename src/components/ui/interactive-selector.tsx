@@ -43,6 +43,8 @@ const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
   const optionCount = options.length;
   const compactScrollerRef = useRef<HTMLDivElement>(null);
   const compactScrollFrame = useRef<number>(0);
+  const isCompactProgrammaticScroll = useRef(false);
+  const compactScrollTimeout = useRef<number | null>(null);
 
   const handleOptionClick = (index: number) => {
     if (index !== activeIndex) {
@@ -58,6 +60,9 @@ const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
   };
 
   const scrollToCompactProject = (index: number) => {
+    isCompactProgrammaticScroll.current = true;
+    if (compactScrollTimeout.current) window.clearTimeout(compactScrollTimeout.current);
+
     setActiveIndex(index);
 
     const scroller = compactScrollerRef.current;
@@ -69,9 +74,14 @@ const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
       block: 'nearest',
       inline: 'center',
     });
+
+    compactScrollTimeout.current = window.setTimeout(() => {
+      isCompactProgrammaticScroll.current = false;
+    }, 600);
   };
 
   const handleCompactScroll = () => {
+    if (isCompactProgrammaticScroll.current) return;
     if (compactScrollFrame.current) return;
 
     compactScrollFrame.current = window.requestAnimationFrame(() => {
@@ -399,9 +409,9 @@ const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
               width: '42px',
               height: '42px',
               borderRadius: '999px',
-              border: '1px solid rgba(255,255,255,0.16)',
-              background: 'rgba(255,255,255,0.06)',
-              color: '#fff',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-tertiary)',
+              color: 'var(--text-primary)',
               fontSize: '1.2rem',
               cursor: 'pointer',
             }}
@@ -432,7 +442,7 @@ const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
                   border: 0,
                   background: activeIndex === index
                     ? 'var(--accent-primary)'
-                    : 'rgba(255,255,255,0.3)',
+                    : 'var(--border-color-hover)',
                   transition: 'width 0.2s ease, background 0.2s ease',
                   cursor: 'pointer',
                 }}
@@ -448,9 +458,9 @@ const InteractiveSelector = ({ options = [] }: InteractiveSelectorProps) => {
               width: '42px',
               height: '42px',
               borderRadius: '999px',
-              border: '1px solid rgba(255,255,255,0.16)',
-              background: 'rgba(255,255,255,0.06)',
-              color: '#fff',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-tertiary)',
+              color: 'var(--text-primary)',
               fontSize: '1.2rem',
               cursor: 'pointer',
             }}
