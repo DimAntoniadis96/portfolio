@@ -35,6 +35,14 @@ export default function Skills() {
   const [hoveredCard, setHoveredCard] = useState(null);
   const [animatedCards, setAnimatedCards] = useState([]);
   const sectionRef = useRef(null);
+  const gridRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!gridRef.current) return;
+    const rect = gridRef.current.getBoundingClientRect();
+    gridRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    gridRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  };
 
   // Staggered card entrance animation
   useEffect(() => {
@@ -81,7 +89,11 @@ export default function Skills() {
             </div>
           </div>
 
-          <div className="skills-grid">
+          <div 
+            className="skills-grid" 
+            ref={gridRef}
+            onMouseMove={handleMouseMove}
+          >
             {SKILL_CATEGORIES.map((cat, index) => (
               <article
                 className={[

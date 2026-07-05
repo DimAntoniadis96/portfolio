@@ -168,7 +168,19 @@
 }
 
 .experience-panel-inner::before {
-  content: none;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--border-color),
+    var(--border-color) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+  opacity: 0.25;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .experience-panel-topline,

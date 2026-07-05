@@ -113,12 +113,12 @@ html {
 }
 
 body {
+  counter-reset: section-counter;
   font-family: var(--font-body);
   background-color: var(--bg-primary);
   background-image:
-    linear-gradient(var(--border-color) 1px, transparent 1px),
-    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--accent-primary) 18%, transparent) 1px, transparent 0);
-  background-size: 100% 96px, 22px 22px;
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text-secondary) 15%, transparent) 1px, transparent 0);
+  background-size: 24px 24px;
   background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.7;
@@ -153,8 +153,35 @@ body {
 
 /* ---------- Section ---------- */
 .section {
+  position: relative;
   padding: var(--section-padding);
-  border-top: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  border-top: 1px dashed var(--border-color-hover);
+}
+
+/* Geometric + accents on section borders */
+.section::before,
+.section::after {
+  content: '+';
+  position: absolute;
+  top: -8.5px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1;
+  background: var(--bg-primary);
+  padding: 0 4px;
+  font-weight: 400;
+  transition: background-color var(--transition-slow);
+}
+
+.section::before {
+  left: clamp(20px, 5vw, 80px);
+  transform: translateX(-50%);
+}
+
+.section::after {
+  right: clamp(20px, 5vw, 80px);
+  transform: translateX(50%);
 }
 
 /* ---------- Section Label ---------- */
@@ -169,16 +196,13 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  counter-increment: section-counter;
 }
 
 .section-label::before {
-  content: '[';
+  content: '// ' counter(section-counter, decimal-leading-zero) ' _ ';
   color: var(--text-tertiary);
-}
-
-.section-label::after {
-  content: ']';
-  color: var(--text-tertiary);
+  font-weight: 500;
 }
 
 /* ---------- Section Heading ---------- */
