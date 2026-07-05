@@ -235,6 +235,8 @@ export default function Navbar({ theme, toggleTheme }) {
                 <a
                   className={`mobile-link${activeSection === item.href ? ' active' : ''}`}
                   href={item.href}
+                  aria-current={activeSection === item.href ? 'page' : undefined}
+                  tabIndex={mobileOpen ? 0 : -1}
                   onClick={(e) => handleNavClick(e, item.href)}
                 >
                   {item.label}

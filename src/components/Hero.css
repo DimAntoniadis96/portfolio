@@ -261,17 +261,17 @@
 @media (max-width: 1024px) {
   .hero-content {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 40px;
     text-align: center;
   }
 
   .hero-text {
     align-items: center;
-    order: 2;
+    order: 1;
   }
 
   .hero-photo-wrapper {
-    order: 1;
+    order: 2;
   }
 
   .hero-subtitle {
@@ -293,6 +293,22 @@
   .hero-photo-card {
     width: min(300px, 82vw);
     height: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 96px;
+    padding-bottom: 72px;
+  }
+
+  .hero-content {
+    gap: 34px;
+  }
+
+  .hero-photo-card {
+    width: min(260px, 78vw);
+    height: 330px;
   }
 }
 

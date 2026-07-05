@@ -13,9 +13,8 @@ export default function Hero() {
     <section className="hero section" id="hero">
       <div className="container">
         <div className="hero-content">
-          {/* Left: Text */}
           <div className="hero-text">
-            <span className="hero-role">Junior Software Developer / Frontend</span>
+            <span className="hero-role">Frontend Software Developer</span>
 
             <h1 className="hero-name">
               Dimitrios<br />
@@ -23,12 +22,12 @@ export default function Hero() {
             </h1>
 
             <p className="hero-subtitle">
-              Software Developer and co-owner of{' '}
+              Frontend developer and co-owner of{' '}
               <a href="https://study-saga.com" target="_blank" rel="noopener noreferrer" className="hero-link">
                 study-saga.com
               </a>
               , a production platform serving <strong>40,000+ users</strong> across web, desktop, and Discord.
-              I build user-focused software with React, TypeScript and modern web technologies.
+              I build responsive, product-focused interfaces with React, TypeScript, and modern web tooling.
             </p>
 
             <div className="hero-cta">
@@ -59,14 +58,12 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right: Photo */}
           <div className="hero-photo-wrapper">
             <div 
               className={`hero-photo-card flip-container ${isFlipped ? 'flipped' : ''}`}
               onClick={() => setIsFlipped(!isFlipped)}
             >
               <div className="flipper">
-                {/* Front: Photo */}
                 <div className="front">
                   <img
                     src="/image_me.jpg"
@@ -78,7 +75,6 @@ export default function Hero() {
                   <span className="hero-photo-caption">CV on the back</span>
                 </div>
 
-                {/* Back: Download CV */}
                 <div className="back">
                   <a href="/Dimitrios_Antoniadis_CV.pdf" className="cv-download-content" download="Dimitrios_Antoniadis_CV.pdf">
                     <CvIcon size={56} />

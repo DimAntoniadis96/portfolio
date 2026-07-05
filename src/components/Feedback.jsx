@@ -703,12 +703,12 @@ export default function Feedback() {
           
           <div className="feedback-header">
             <div>
-              <span className="section-label">Feedback wall</span>
-              <h2 className="section-heading">Guestbook</h2>
+              <span className="section-label">Feedback</span>
+              <h2 className="section-heading">Project Notes</h2>
             </div>
             <p className="feedback-text">
-              Share a quick note about my work, a collaboration idea, or something I could improve.
-              Your note lands on the wall, then you can drag it into place.
+              Leave a short note about my work, a collaboration idea, or an improvement I should consider.
+              Notes stay local in this portfolio demo.
             </p>
           </div>
 
@@ -717,8 +717,8 @@ export default function Feedback() {
             {/* Left: Signal Input */}
             <div className="signal-input">
               <div className="signal-input-header">
-                <span className="signal-input-title">Sign the wall</span>
-                <h3>Add your feedback</h3>
+                <span className="signal-input-title">Leave a note</span>
+                <h3>Share feedback</h3>
                 <div className="signal-live">
                   <div className="signal-live-dot" aria-hidden="true"></div>
                   {REVIEWS_API_BASE_URL ? 'LIVE' : 'LOCAL'}
@@ -784,11 +784,11 @@ export default function Feedback() {
               className="signal-board-area"
               ref={boardRef}
               role="region"
-              aria-label="Guestbook note wall"
+              aria-label="Project feedback notes"
               aria-describedby="guestbook-board-hint"
             >
               <div className="signal-board-hint" id="guestbook-board-hint">
-                Drag notes. Arrow keys work when focused.
+                Move notes after posting. Arrow keys work when focused.
               </div>
 
               {isLoadingReviews && (
@@ -800,11 +800,11 @@ export default function Feedback() {
 
               {!isLoadingReviews && notes.length === 0 && (
                 <div className="signal-board-empty">
-                  <span>No notes yet</span>
+                  <span>No feedback yet</span>
                   <p>
                     {REVIEWS_API_BASE_URL
-                      ? 'Be the first to leave feedback on the live wall.'
-                      : 'Be the first to leave feedback on this local wall.'}
+                      ? 'Be the first to leave useful feedback.'
+                      : 'Be the first to leave a useful note.'}
                   </p>
                 </div>
               )}

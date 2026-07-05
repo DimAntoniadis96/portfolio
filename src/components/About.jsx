@@ -31,14 +31,14 @@ export default function About() {
 
             <div className="about-text">
               <p>
-                I'm <strong>Dimitrios Antoniadis</strong>, a <strong>junior software developer</strong> based
+                I'm <strong>Dimitrios Antoniadis</strong>, a <strong>frontend software developer</strong> based
                 in <strong>Thessaloniki, Greece</strong>. I'm the co-owner and frontend developer
                 of <a href="https://study-saga.com" target="_blank" rel="noopener noreferrer">study-saga.com</a>,
                 a production platform serving <strong>40,000+ users</strong> across web, desktop, and Discord, with a mobile
                 app currently in development.
               </p>
               <p>
-                I build user-focused software with <strong>React</strong>, <strong>TypeScript</strong> and
+                I build user-focused software with <strong>React</strong>, <strong>TypeScript</strong>, and
                 modern web technologies. My work spans responsive UIs, real-time collaborative features,
                 gamification systems, and integrations with services like Discord, Clerk, and Convex.
               </p>
