@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './Navbar.css';
+import { HomeIcon, MoonIcon, SunIcon } from './SiteIcons';
 
 const NAV_ITEMS = [
   { label: 'About', href: '#about' },
@@ -69,16 +70,28 @@ export default function Navbar({ theme, toggleTheme }) {
   // ── Sliding indicator ──
   useEffect(() => {
     if (!navLinksRef.current || !indicatorRef.current) return;
-    const active = navLinksRef.current.querySelector('.nav-link.active');
-    if (active) {
+
+    const positionIndicator = () => {
+      const active = navLinksRef.current.querySelector('.nav-link.active');
+      const activeLabel = active?.querySelector('.nav-link-label') || active;
+
+      if (!activeLabel) {
+        indicatorRef.current.style.opacity = '0';
+        return;
+      }
+
       const listRect = navLinksRef.current.getBoundingClientRect();
-      const linkRect = active.getBoundingClientRect();
-      indicatorRef.current.style.width = `${linkRect.width}px`;
-      indicatorRef.current.style.transform = `translateX(${linkRect.left - listRect.left}px)`;
+      const labelRect = activeLabel.getBoundingClientRect();
+      indicatorRef.current.style.width = `${labelRect.width}px`;
+      indicatorRef.current.style.transform = `translateX(${labelRect.left - listRect.left}px)`;
+      indicatorRef.current.style.top = `${labelRect.bottom - listRect.top + 2}px`;
       indicatorRef.current.style.opacity = '1';
-    } else {
-      indicatorRef.current.style.opacity = '0';
-    }
+    };
+
+    positionIndicator();
+    window.addEventListener('resize', positionIndicator);
+
+    return () => window.removeEventListener('resize', positionIndicator);
   }, [activeSection]);
 
   // ── Scroll: hide/show + progress bar ──
@@ -158,8 +171,14 @@ export default function Navbar({ theme, toggleTheme }) {
         {/* Inner container */}
         <div className="navbar-inner">
           {/* Logo / Brand */}
-          <a href="#hero" className="navbar-brand" onClick={(e) => handleNavClick(e, '#hero')}>
-            DA
+          <a
+            href="#hero"
+            className="navbar-brand"
+            onClick={(e) => handleNavClick(e, '#hero')}
+            aria-label="Home"
+            title="Home"
+          >
+            <HomeIcon size={18} />
           </a>
 
           {/* Desktop nav links */}
@@ -174,7 +193,7 @@ export default function Navbar({ theme, toggleTheme }) {
                     aria-current={activeSection === item.href ? 'page' : undefined}
                     onClick={(e) => handleNavClick(e, item.href)}
                   >
-                    {item.label}
+                    <span className="nav-link-label">{item.label}</span>
                   </a>
                 </li>
               ))}
@@ -188,15 +207,7 @@ export default function Navbar({ theme, toggleTheme }) {
               onClick={toggleTheme}
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
-              {theme === 'dark' ? (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                </svg>
-              )}
+              {theme === 'dark' ? <SunIcon size={18} /> : <MoonIcon size={18} />}
             </button>
 
             {/* Hamburger — visible on tablet & mobile */}

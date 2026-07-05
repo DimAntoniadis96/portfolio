@@ -704,7 +704,7 @@ export default function Feedback() {
           <div className="feedback-header">
             <div>
               <span className="section-label">Feedback wall</span>
-              <h2 className="section-heading">Guest<span style={{ color: 'var(--accent-primary)' }}>book</span></h2>
+              <h2 className="section-heading">Guestbook</h2>
             </div>
             <p className="feedback-text">
               Share a quick note about my work, a collaboration idea, or something I could improve.
@@ -788,7 +788,7 @@ export default function Feedback() {
               aria-describedby="guestbook-board-hint"
             >
               <div className="signal-board-hint" id="guestbook-board-hint">
-                // Drag notes, or use arrow keys when focused
+                Drag notes. Arrow keys work when focused.
               </div>
 
               {isLoadingReviews && (

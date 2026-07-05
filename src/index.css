@@ -1,6 +1,6 @@
 /* ============================================
-   DESIGN SYSTEM — Portfolio
-   Black, White & Baby Blue
+   DESIGN SYSTEM - Portfolio
+   Personal notebook / shipped work
    ============================================ */
 
 /* ---------- Reset ---------- */
@@ -16,11 +16,11 @@
 :root {
   /* Typography */
   --font-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: 'Clash Display', sans-serif;
+  --font-heading: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Spacing */
-  --section-padding: 120px 0;
+  --section-padding: 108px 0;
   --container-width: 1200px;
   --container-padding: 0 clamp(20px, 5vw, 80px);
 
@@ -30,42 +30,42 @@
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 14px;
   --radius-full: 9999px;
 }
 
 /* ---------- Dark Theme (default) ---------- */
 html.dark {
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #111111;
-  --bg-card: rgba(10, 10, 10, 0.6);
-  --bg-card-hover: rgba(18, 18, 18, 0.8);
-  --bg-nav: rgba(5, 5, 5, 0.8);
+  --bg-primary: #0d0f10;
+  --bg-secondary: #141719;
+  --bg-tertiary: #1b2023;
+  --bg-card: rgba(20, 23, 25, 0.82);
+  --bg-card-hover: rgba(24, 28, 31, 0.96);
+  --bg-nav: rgba(13, 15, 16, 0.86);
 
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-tertiary: #666666;
-  --text-heading: #ffffff;
+  --text-primary: #f0eee7;
+  --text-secondary: #bab5aa;
+  --text-tertiary: #817c72;
+  --text-heading: #fbf8ef;
 
-  --accent-primary: #89CFF0;
-  --accent-secondary: #a8dcf5;
-  --accent-gradient: linear-gradient(135deg, #89CFF0 0%, #a8dcf5 100%);
-  --accent-gradient-hover: linear-gradient(135deg, #a8dcf5 0%, #c0e8fa 100%);
-  --accent-glow: rgba(137, 207, 240, 0.08);
-  --accent-glow-strong: rgba(137, 207, 240, 0.15);
+  --accent-primary: #76b8c8;
+  --accent-secondary: #9fd8e5;
+  --accent-gradient: none;
+  --accent-gradient-hover: none;
+  --accent-glow: rgba(118, 184, 200, 0.08);
+  --accent-glow-strong: rgba(118, 184, 200, 0.12);
 
-  --border-color: rgba(255, 255, 255, 0.06);
-  --border-color-hover: rgba(255, 255, 255, 0.12);
-  --border-accent: rgba(137, 207, 240, 0.25);
+  --border-color: rgba(240, 238, 231, 0.1);
+  --border-color-hover: rgba(240, 238, 231, 0.2);
+  --border-accent: rgba(118, 184, 200, 0.34);
 
-  --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.5);
-  --shadow-card-hover: 0 8px 40px rgba(137, 207, 240, 0.1);
+  --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.22);
+  --shadow-card-hover: 0 20px 48px rgba(0, 0, 0, 0.32);
 
-  --glass-blur: blur(20px);
+  --glass-blur: none;
   --glass-border: 1px solid var(--border-color);
 
   color-scheme: dark;
@@ -73,33 +73,33 @@ html.dark {
 
 /* ---------- Light Theme ---------- */
 html.light {
-  --bg-primary: #f5f5f5;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #eeeeee;
-  --bg-card: rgba(255, 255, 255, 0.7);
-  --bg-card-hover: rgba(255, 255, 255, 0.95);
-  --bg-nav: rgba(255, 255, 255, 0.85);
+  --bg-primary: #f6f3ec;
+  --bg-secondary: #fffdf8;
+  --bg-tertiary: #ece7dc;
+  --bg-card: rgba(255, 253, 248, 0.88);
+  --bg-card-hover: rgba(255, 253, 248, 1);
+  --bg-nav: rgba(246, 243, 236, 0.88);
 
-  --text-primary: #111111;
-  --text-secondary: #555555;
-  --text-tertiary: #888888;
-  --text-heading: #000000;
+  --text-primary: #181b1d;
+  --text-secondary: #53504a;
+  --text-tertiary: #8a8378;
+  --text-heading: #111315;
 
-  --accent-primary: #4da8da;
-  --accent-secondary: #3a8fbf;
-  --accent-gradient: linear-gradient(135deg, #4da8da 0%, #3a8fbf 100%);
-  --accent-gradient-hover: linear-gradient(135deg, #5bb5e3 0%, #4da8da 100%);
-  --accent-glow: rgba(77, 168, 218, 0.06);
-  --accent-glow-strong: rgba(77, 168, 218, 0.12);
+  --accent-primary: #397f91;
+  --accent-secondary: #5fa5b7;
+  --accent-gradient: none;
+  --accent-gradient-hover: none;
+  --accent-glow: rgba(57, 127, 145, 0.08);
+  --accent-glow-strong: rgba(57, 127, 145, 0.12);
 
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-color-hover: rgba(0, 0, 0, 0.15);
-  --border-accent: rgba(77, 168, 218, 0.25);
+  --border-color: rgba(17, 19, 21, 0.12);
+  --border-color-hover: rgba(17, 19, 21, 0.24);
+  --border-accent: rgba(57, 127, 145, 0.34);
 
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 8px 30px rgba(77, 168, 218, 0.1);
+  --shadow-card: 0 16px 34px rgba(24, 27, 29, 0.08);
+  --shadow-card-hover: 0 18px 42px rgba(24, 27, 29, 0.12);
 
-  --glass-blur: blur(20px);
+  --glass-blur: none;
   --glass-border: 1px solid var(--border-color);
 
   color-scheme: light;
@@ -115,6 +115,11 @@ html {
 body {
   font-family: var(--font-body);
   background-color: var(--bg-primary);
+  background-image:
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--accent-primary) 18%, transparent) 1px, transparent 0);
+  background-size: 100% 96px, 22px 22px;
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.7;
   transition: background-color var(--transition-slow), color var(--transition-slow);
@@ -149,14 +154,15 @@ body {
 /* ---------- Section ---------- */
 .section {
   padding: var(--section-padding);
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
 }
 
 /* ---------- Section Label ---------- */
 .section-label {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   color: var(--accent-primary);
   margin-bottom: 12px;
@@ -166,8 +172,13 @@ body {
 }
 
 .section-label::before {
-  content: '//';
-  opacity: 0.6;
+  content: '[';
+  color: var(--text-tertiary);
+}
+
+.section-label::after {
+  content: ']';
+  color: var(--text-tertiary);
 }
 
 /* ---------- Section Heading ---------- */
@@ -177,34 +188,29 @@ h1, h2, h3, h4, h5, h6 {
 
 .section-heading {
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: 700;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  line-height: 1.1;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  font-size: clamp(2.25rem, 4.5vw, 3.35rem);
+  font-weight: 650;
+  color: var(--text-heading);
+  line-height: 1.04;
+  text-transform: none;
+  letter-spacing: 0;
   margin-bottom: 24px;
 }
 
-/* 1st, 3rd, 5th headers (Even sections due to Hero): Blue -> Text Color (Left to Right) */
 section:nth-of-type(even) .section-heading {
-  background-image: linear-gradient(to right, var(--accent-primary) 0%, var(--text-primary) 100%);
+  background-image: none;
 }
 
-/* 2nd, 4th, 6th headers (Odd sections due to Hero): Blue -> Text Color (Right to Left) */
 section:nth-of-type(odd) .section-heading {
-  background-image: linear-gradient(to left, var(--accent-primary) 0%, var(--text-primary) 100%);
+  background-image: none;
 }
 
 /* ---------- Fade-in Animation ---------- */
 .fade-in {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fade-in.visible {
@@ -215,8 +221,6 @@ section:nth-of-type(odd) .section-heading {
 /* ---------- Glass Card ---------- */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
   border-radius: var(--radius-lg);
   transition: background var(--transition-base),
@@ -229,7 +233,7 @@ section:nth-of-type(odd) .section-heading {
   background: var(--bg-card-hover);
   border-color: var(--border-color-hover);
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 /* ---------- Badge / Pill ---------- */
@@ -243,7 +247,7 @@ section:nth-of-type(odd) .section-heading {
   color: var(--text-secondary);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   white-space: nowrap;
 }
@@ -251,7 +255,7 @@ section:nth-of-type(odd) .section-heading {
 .badge:hover {
   color: var(--accent-primary);
   border-color: var(--border-accent);
-  background: var(--accent-glow);
+  background: var(--bg-card-hover);
 }
 
 /* ---------- Button ---------- */
@@ -260,12 +264,12 @@ section:nth-of-type(odd) .section-heading {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 12px 22px;
   font-family: var(--font-body);
   font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  border: none;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color-hover);
   cursor: pointer;
   text-decoration: none;
   transition: all var(--transition-base);
@@ -274,14 +278,14 @@ section:nth-of-type(odd) .section-heading {
 
 .btn-primary {
   background: var(--accent-primary);
-  color: #000000;
-  box-shadow: 0 4px 20px rgba(137, 207, 240, 0.2);
+  color: #071012;
+  box-shadow: none;
 }
 
 .btn-primary:hover {
   background: var(--accent-secondary);
-  box-shadow: 0 6px 30px rgba(137, 207, 240, 0.35);
-  transform: translateY(-2px);
+  box-shadow: none;
+  transform: translate(-2px, -2px);
 }
 
 .btn-secondary {
@@ -293,8 +297,8 @@ section:nth-of-type(odd) .section-heading {
 .btn-secondary:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
-  background: var(--accent-glow);
-  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+  transform: translate(-2px, -2px);
 }
 
 /* ---------- Social Icon ---------- */
@@ -302,9 +306,9 @@ section:nth-of-type(odd) .section-heading {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
   background: transparent;
@@ -316,8 +320,8 @@ section:nth-of-type(odd) .section-heading {
 .social-icon:hover {
   color: var(--accent-primary);
   border-color: var(--border-accent);
-  background: var(--accent-glow);
-  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+  transform: translate(-2px, -2px);
 }
 
 .social-icon svg {

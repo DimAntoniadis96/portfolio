@@ -1,42 +1,32 @@
 /* ============================================
-   NAVBAR — Full-width top bar
-   Opposite-of-theme: dark mode → creamy white bar
-                       light mode → dark bar
+   NAVBAR - quiet fixed rail
    ============================================ */
 
-/* ── Dark theme: creamy white bar ── */
 .navbar-bar {
-  --nav-bg: rgba(252, 250, 245, 0.72);
-  --nav-bg-scrolled: rgba(252, 250, 245, 0.82);
-  --nav-text: #1a1a2e;
-  --nav-text-muted: #5a5a72;
-  --nav-accent: #89CFF0;
-  --nav-accent-dark: #5fb8e4;
-  --nav-accent-glow: rgba(137, 207, 240, 0.15);
-  --nav-accent-glow-strong: rgba(137, 207, 240, 0.25);
-  --nav-border: rgba(137, 207, 240, 0.12);
-  --nav-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --nav-shadow-scrolled: 0 2px 20px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+  --nav-bg: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+  --nav-bg-scrolled: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+  --nav-text: var(--text-heading);
+  --nav-text-muted: var(--text-tertiary);
+  --nav-accent: var(--accent-primary);
+  --nav-accent-dark: var(--accent-primary);
+  --nav-accent-glow: var(--accent-glow);
+  --nav-accent-glow-strong: var(--bg-tertiary);
+  --nav-border: var(--border-color);
+  --nav-shadow: none;
+  --nav-shadow-scrolled: 0 12px 30px rgba(0, 0, 0, 0.18);
   --nav-height: 56px;
   --nav-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Light theme: dark/black bar ── */
 html.light .navbar-bar {
-  --nav-bg: rgba(15, 15, 20, 0.72);
-  --nav-bg-scrolled: rgba(15, 15, 20, 0.82);
-  --nav-text: #f0f0f5;
-  --nav-text-muted: #a0a0b0;
-  --nav-accent: #89CFF0;
-  --nav-accent-dark: #89CFF0;
-  --nav-accent-glow: rgba(137, 207, 240, 0.12);
-  --nav-accent-glow-strong: rgba(137, 207, 240, 0.22);
-  --nav-border: rgba(255, 255, 255, 0.08);
-  --nav-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  --nav-shadow-scrolled: 0 2px 20px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.12);
+  --nav-bg: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+  --nav-bg-scrolled: color-mix(in srgb, var(--bg-primary) 94%, transparent);
+  --nav-text: var(--text-heading);
+  --nav-text-muted: var(--text-tertiary);
+  --nav-border: var(--border-color);
+  --nav-shadow-scrolled: 0 12px 30px rgba(24, 27, 29, 0.08);
 }
 
-/* ── The bar itself: full-width, flush top, always visible ── */
 .navbar-bar {
   position: fixed;
   top: 0;
@@ -45,8 +35,8 @@ html.light .navbar-bar {
   z-index: 1000;
   height: var(--nav-height);
   background: var(--nav-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--nav-border);
   box-shadow: var(--nav-shadow);
   transition:
@@ -60,7 +50,6 @@ html.light .navbar-bar {
   box-shadow: var(--nav-shadow-scrolled);
 }
 
-/* ── Inner layout: brand | links | actions ── */
 .navbar-inner {
   display: flex;
   align-items: center;
@@ -68,35 +57,35 @@ html.light .navbar-bar {
   height: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 clamp(16px, 3vw, 32px);
 }
 
-/* ── Brand mark ── */
 .navbar-brand {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  width: 42px;
+  height: 36px;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
   text-decoration: none;
-  background: linear-gradient(135deg, #89CFF0 0%, #5fb8e4 100%);
-  color: #fff;
+  background: transparent;
+  color: var(--nav-text);
+  border: 1px solid var(--nav-border);
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(137, 207, 240, 0.4);
-  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: none;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .navbar-brand:hover {
-  opacity: 0.9;
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(137, 207, 240, 0.6);
+  color: var(--nav-accent);
+  border-color: var(--nav-accent);
+  transform: translate(-1px, -1px);
 }
 
-/* ── Desktop navigation (centered) ── */
 .navbar-nav {
   position: absolute;
   left: 50%;
@@ -113,14 +102,13 @@ html.light .navbar-bar {
   position: relative;
 }
 
-/* ── Sliding indicator pill ── */
 .navbar-indicator {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  height: 100%;
-  background: var(--nav-accent-glow-strong);
-  border-radius: 8px;
+  height: 1px;
+  background: var(--nav-accent);
+  border-radius: 0;
   transition:
     transform 0.35s var(--nav-ease),
     width 0.35s var(--nav-ease),
@@ -130,19 +118,24 @@ html.light .navbar-bar {
   z-index: 0;
 }
 
-/* ── Individual link ── */
 .nav-link {
   position: relative;
   z-index: 1;
   display: block;
-  padding: 7px 14px;
-  font-size: 0.84rem;
-  font-weight: 500;
+  padding: 7px 11px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
   color: var(--nav-text-muted);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 0;
   white-space: nowrap;
   transition: color 0.2s ease;
+}
+
+.nav-link-label {
+  display: inline-block;
+  line-height: 1.1;
 }
 
 .nav-link:hover {
@@ -176,10 +169,10 @@ html.light .navbar-bar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
+  width: 38px;
   height: 36px;
-  border: none;
-  border-radius: 8px;
+  border: 1px solid var(--nav-border);
+  border-radius: 0;
   background: transparent;
   color: var(--nav-text-muted);
   cursor: pointer;
@@ -189,7 +182,8 @@ html.light .navbar-bar {
 
 .theme-toggle:hover {
   color: var(--nav-accent-dark);
-  background: var(--nav-accent-glow);
+  background: transparent;
+  border-color: var(--nav-accent);
 }
 
 .theme-toggle svg {
@@ -198,43 +192,37 @@ html.light .navbar-bar {
   transition: transform 0.4s var(--nav-ease);
 }
 
-.theme-toggle:hover svg {
-  transform: rotate(25deg);
-}
-
-/* ── Scroll progress bar ── */
 .scroll-progress {
   position: absolute;
   bottom: -1px;
   left: 0;
   width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, #89CFF0, #5fb8e4, #89CFF0);
+  height: 2px;
+  background: var(--nav-accent);
   transform-origin: left;
   transform: scaleX(0);
   will-change: transform;
-  border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 10px rgba(137, 207, 240, 0.6);
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* ── Hamburger button — hidden on desktop ── */
 .hamburger {
   display: none;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 36px;
+  width: 38px;
   height: 36px;
   padding: 7px;
-  background: none;
-  border: none;
+  background: transparent;
+  border: 1px solid var(--nav-border);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 0;
   transition: background 0.2s ease;
 }
 
 .hamburger:hover {
-  background: var(--nav-accent-glow);
+  border-color: var(--nav-accent);
 }
 
 .hamburger span {
@@ -252,7 +240,7 @@ html.light .navbar-bar {
 
 .hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
-  background: var(--nav-accent-dark);
+  background: var(--nav-accent);
 }
 .hamburger.open span:nth-child(2) {
   opacity: 0;
@@ -260,21 +248,20 @@ html.light .navbar-bar {
 }
 .hamburger.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
-  background: var(--nav-accent-dark);
+  background: var(--nav-accent);
 }
 
 /* ============================================
    MOBILE / TABLET OVERLAY
    ============================================ */
 
-/* Dark mode overlay: creamy white */
 .mobile-overlay {
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: rgba(252, 250, 245, 0.97);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: color-mix(in srgb, var(--bg-primary) 96%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,9 +270,8 @@ html.light .navbar-bar {
   transition: opacity 0.35s ease;
 }
 
-/* Light mode overlay: dark */
 html.light .mobile-overlay {
-  background: rgba(15, 15, 20, 0.97);
+  background: color-mix(in srgb, var(--bg-primary) 96%, transparent);
 }
 
 .mobile-overlay.open {
@@ -325,29 +311,20 @@ html.light .mobile-overlay {
 .mobile-link {
   display: inline-block;
   padding: 14px 32px;
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #5a5a72;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 650;
+  color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 0;
   transition: color 0.2s ease, background 0.2s ease;
 }
 
 /* Light mode mobile links: light text on dark overlay */
-html.light .mobile-link {
-  color: #a0a0b0;
-}
-
 .mobile-link:hover,
 .mobile-link.active {
-  color: #5fb8e4;
-  background: rgba(137, 207, 240, 0.1);
-}
-
-html.light .mobile-link:hover,
-html.light .mobile-link.active {
-  color: #89CFF0;
-  background: rgba(137, 207, 240, 0.1);
+  color: var(--accent-primary);
+  background: transparent;
 }
 
 .mobile-link.active {

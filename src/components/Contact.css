@@ -10,7 +10,7 @@
 .contact-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: clamp(42px, 7vw, 80px);
   align-items: center;
 }
 
@@ -23,16 +23,13 @@
 
 .contact-heading {
   font-size: clamp(2rem, 4.5vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-heading);
   line-height: 1.15;
 }
 
 .heading-accent {
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent-primary);
 }
 
 .contact-text {
@@ -56,19 +53,23 @@
 
 /* --- Right: Info Cards --- */
 .contact-right {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: grid;
+  gap: 14px;
+  justify-self: end;
+  width: 100%;
+  max-width: 560px;
 }
 
 .contact-info-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 20px;
   align-items: center;
-  gap: 20px;
-  padding: 24px;
-  background: var(--bg-card);
+  gap: 18px;
+  min-height: 96px;
+  padding: 18px;
+  background: color-mix(in srgb, var(--bg-card) 86%, transparent);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   text-decoration: none;
   color: inherit;
   transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base), background var(--transition-base);
@@ -80,34 +81,33 @@ a.contact-info-card {
 }
 
 a.contact-info-card:hover {
-  border-color: var(--border-color-hover);
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-3px);
-  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--bg-card) 94%, transparent);
 }
 
 .contact-info-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(137, 207, 240, 0.08);
+  width: 56px;
+  height: 56px;
+  border-radius: 0;
+  background: transparent;
+  border: 1px solid var(--border-color-hover);
   color: var(--accent-primary);
-  flex-shrink: 0;
 }
 
 .contact-info-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 .contact-info-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  flex: 1;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -120,17 +120,16 @@ a.contact-info-card:hover {
 }
 
 .contact-info-value {
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.7vw, 1.14rem);
   font-weight: 500;
   color: var(--text-heading);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .contact-info-arrow {
+  justify-self: end;
   color: var(--text-tertiary);
-  flex-shrink: 0;
   transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
@@ -146,24 +145,54 @@ a.contact-info-card:hover .contact-info-arrow {
     gap: 48px;
   }
 
+  .contact-right {
+    justify-self: stretch;
+    max-width: none;
+  }
+
   .contact-actions {
     flex-direction: column;
     align-items: flex-start;
   }
 }
 
+@media (max-width: 520px) {
+  .contact-info-card {
+    grid-template-columns: 46px minmax(0, 1fr) 18px;
+    min-height: 86px;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .contact-info-value {
+    font-size: 0.96rem;
+  }
+
+  .contact-info-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .contact-info-icon svg {
+    width: 21px;
+    height: 21px;
+  }
+}
+
 @media (max-width: 400px) {
   .contact-info-card {
-    padding: 16px;
+    grid-template-columns: 42px minmax(0, 1fr) 16px;
+    padding: 14px;
     gap: 12px;
   }
-  
-  .contact-info-value {
-    font-size: 0.85rem;
-  }
-  
+
   .contact-info-icon {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .contact-info-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
   }
 }

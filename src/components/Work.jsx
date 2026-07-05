@@ -1,7 +1,7 @@
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Work.css';
 import InteractiveSelector from './ui/interactive-selector';
-import { Monitor, Trophy, Wine, Gamepad2 } from 'lucide-react';
+import { AcademyIcon, GameIcon, HospitalityIcon, StudySagaIcon } from './SiteIcons';
 
 const PROJECTS = [
   {
@@ -81,16 +81,18 @@ export default function Work() {
   const { ref, isVisible } = useFadeIn();
 
   const interactiveOptions = PROJECTS.map((project, index) => {
-    let Icon = Monitor;
-    if (index === 1) Icon = Trophy;
-    else if (index === 2) Icon = Wine;
-    else if (index === 3) Icon = Gamepad2;
+    let Icon = StudySagaIcon;
+    if (index === 1) Icon = AcademyIcon;
+    else if (index === 2) Icon = HospitalityIcon;
+    else if (index === 3) Icon = GameIcon;
 
     return {
       title: project.title,
+      subtitle: project.subtitle,
+      meta: project.meta,
       description: project.description,
       image: project.image.src,
-      icon: <Icon size={24} color="white" />,
+      icon: <Icon size={22} />,
       url: project.links.website,
       stats: project.stats,
       tags: project.tech

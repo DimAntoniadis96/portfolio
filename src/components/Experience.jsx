@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Experience.css';
+import { ArrowLeftIcon, ArrowRightIcon, ExternalArrowIcon } from './SiteIcons';
 
 const EXPERIENCES = [
   {
@@ -136,7 +137,8 @@ export default function Experience() {
                     <p className="experience-panel-company">
                       {activeExperience.companyUrl ? (
                         <a href={activeExperience.companyUrl} target="_blank" rel="noopener noreferrer">
-                          {activeExperience.company} ↗
+                          {activeExperience.company}
+                          <ExternalArrowIcon size={14} />
                         </a>
                       ) : (
                         activeExperience.company
@@ -155,10 +157,10 @@ export default function Experience() {
 
                 <div className="experience-panel-actions">
                   <button type="button" onClick={handlePrev} aria-label="Previous experience">
-                    <span aria-hidden="true">←</span>
+                    <ArrowLeftIcon size={17} />
                   </button>
                   <button type="button" onClick={handleNext} aria-label="Next experience">
-                    <span aria-hidden="true">→</span>
+                    <ArrowRightIcon size={17} />
                   </button>
                 </div>
               </div>
