@@ -22,7 +22,10 @@
   /* Spacing */
   --section-padding: 108px 0;
   --container-width: 1200px;
-  --container-padding: 0 clamp(20px, 5vw, 80px);
+  --container-gutter: clamp(20px, 5vw, 80px);
+  --container-padding: 0 var(--container-gutter);
+  /* Keeps section corner marks + navbar aligned to the content column on wide screens */
+  --edge-inset: max(var(--container-gutter), calc((100% - var(--container-width)) / 2 + var(--container-gutter)));
 
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -53,10 +56,11 @@ html.dark {
 
   --accent-primary: #76b8c8;
   --accent-secondary: #9fd8e5;
-  --accent-gradient: none;
-  --accent-gradient-hover: none;
+  --accent-gradient: linear-gradient(120deg, #9fd8e5 0%, #76b8c8 55%, #5fa9bd 100%);
+  --accent-gradient-hover: linear-gradient(120deg, #b3e2ec 0%, #86c4d3 55%, #6fb6c9 100%);
   --accent-glow: rgba(118, 184, 200, 0.08);
   --accent-glow-strong: rgba(118, 184, 200, 0.12);
+  --shadow-accent: 0 10px 30px -10px rgba(118, 184, 200, 0.45);
 
   --border-color: rgba(240, 238, 231, 0.1);
   --border-color-hover: rgba(240, 238, 231, 0.2);
@@ -87,10 +91,11 @@ html.light {
 
   --accent-primary: #397f91;
   --accent-secondary: #5fa5b7;
-  --accent-gradient: none;
-  --accent-gradient-hover: none;
+  --accent-gradient: linear-gradient(120deg, #5fa5b7 0%, #3f8698 55%, #34798b 100%);
+  --accent-gradient-hover: linear-gradient(120deg, #6fb3c4 0%, #47919f 55%, #3d8496 100%);
   --accent-glow: rgba(57, 127, 145, 0.08);
   --accent-glow-strong: rgba(57, 127, 145, 0.12);
+  --shadow-accent: 0 12px 30px -12px rgba(57, 127, 145, 0.32);
 
   --border-color: rgba(17, 19, 21, 0.12);
   --border-color-hover: rgba(17, 19, 21, 0.24);
@@ -110,6 +115,42 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* ---------- Global focus ring (a11y) ---------- */
+/* :where() keeps specificity at 0 so component focus styles still win */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Gradient text helper ---------- */
+.text-gradient {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---------- Respect reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 body {
@@ -175,12 +216,12 @@ body {
 }
 
 .section::before {
-  left: clamp(20px, 5vw, 80px);
+  left: var(--edge-inset);
   transform: translateX(-50%);
 }
 
 .section::after {
-  right: clamp(20px, 5vw, 80px);
+  right: var(--edge-inset);
   transform: translateX(50%);
 }
 
@@ -301,14 +342,15 @@ section:nth-of-type(odd) .section-heading {
 }
 
 .btn-primary {
-  background: var(--accent-primary);
+  background: var(--accent-gradient);
   color: #071012;
-  box-shadow: none;
+  border-color: transparent;
+  box-shadow: var(--shadow-accent);
 }
 
 .btn-primary:hover {
-  background: var(--accent-secondary);
-  box-shadow: none;
+  background: var(--accent-gradient-hover);
+  box-shadow: 0 14px 34px -10px color-mix(in srgb, var(--accent-primary) 55%, transparent);
   transform: translate(-2px, -2px);
 }
 

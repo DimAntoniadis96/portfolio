@@ -262,9 +262,9 @@
 .lang-bar-fill {
   position: relative;
   height: 100%;
-  background: var(--accent-primary);
+  background: var(--accent-gradient);
   border-radius: 0;
-  box-shadow: none;
+  box-shadow: 0 0 12px -2px color-mix(in srgb, var(--accent-primary) 55%, transparent);
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

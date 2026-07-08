@@ -55,9 +55,9 @@ html.light .navbar-bar {
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  max-width: 1280px;
+  max-width: var(--container-width);
   margin: 0 auto;
-  padding: 0 clamp(16px, 3vw, 32px);
+  padding: var(--container-padding);
 }
 
 .navbar-brand {
@@ -198,12 +198,12 @@ html.light .navbar-bar {
   left: 0;
   width: 100%;
   height: 2px;
-  background: var(--nav-accent);
+  background: var(--accent-gradient);
   transform-origin: left;
   transform: scaleX(0);
   will-change: transform;
   border-radius: 0;
-  box-shadow: none;
+  box-shadow: 0 0 10px -1px color-mix(in srgb, var(--accent-primary) 60%, transparent);
 }
 
 .hamburger {

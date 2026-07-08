@@ -29,7 +29,11 @@
 }
 
 .heading-accent {
-  color: var(--accent-primary);
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .contact-text {
@@ -194,5 +198,9 @@ a.contact-info-card:hover .contact-info-arrow {
   .contact-info-label {
     font-size: 0.68rem;
     letter-spacing: 0.08em;
+  }
+
+  .contact-info-value {
+    font-size: 0.86rem;
   }
 }
