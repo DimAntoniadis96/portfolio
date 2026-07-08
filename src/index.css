@@ -163,27 +163,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ---------- Ambient light-blue aurora (replaces dotted grid) ---------- */
-body::before {
-  content: '';
-  position: fixed;
-  inset: -20vh -10vw;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(38vw 38vw at 12% -6%, color-mix(in srgb, var(--accent-primary) 20%, transparent), transparent 62%),
-    radial-gradient(42vw 42vw at 92% 8%, color-mix(in srgb, var(--accent-primary) 12%, transparent), transparent 60%),
-    radial-gradient(50vw 40vw at 60% 108%, color-mix(in srgb, var(--accent-primary) 10%, transparent), transparent 60%);
-  filter: blur(10px);
-  opacity: 0.9;
-  animation: auroraDrift 26s ease-in-out infinite alternate;
-}
-
-@keyframes auroraDrift {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(2%, 1.5%, 0) scale(1.06); }
-  100% { transform: translate3d(-2%, -1%, 0) scale(1.02); }
-}
+/* Ambient light-blue decoration lives in the <Backdrop /> component */
 
 /* ---------- Scrollbar ---------- */
 ::-webkit-scrollbar {

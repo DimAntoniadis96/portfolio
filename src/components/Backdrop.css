@@ -1,0 +1,129 @@
+/* ============================================
+   BACKDROP — ambient decorative background
+   ============================================ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* ---------- Drifting glow orbs ---------- */
+.backdrop-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent-primary) 62%, transparent),
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.backdrop-orb--1 {
+  width: 48vw;
+  height: 48vw;
+  top: -16vh;
+  left: -10vw;
+  opacity: 0.5;
+  animation: orbFloat1 26s ease-in-out infinite alternate;
+}
+
+.backdrop-orb--2 {
+  width: 40vw;
+  height: 40vw;
+  top: 24vh;
+  right: -12vw;
+  opacity: 0.32;
+  animation: orbFloat2 32s ease-in-out infinite alternate;
+}
+
+.backdrop-orb--3 {
+  width: 54vw;
+  height: 54vw;
+  bottom: -22vh;
+  left: 28vw;
+  opacity: 0.28;
+  animation: orbFloat3 38s ease-in-out infinite alternate;
+}
+
+@keyframes orbFloat1 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(7%, 5%, 0) scale(1.14); }
+}
+
+@keyframes orbFloat2 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-8%, 6%, 0) scale(1.16); }
+}
+
+@keyframes orbFloat3 {
+  from { transform: translate3d(0, 0, 0) scale(1.06); }
+  to   { transform: translate3d(6%, -7%, 0) scale(0.94); }
+}
+
+/* ---------- Soft diagonal light ray sweeping the page ---------- */
+.backdrop-rays {
+  position: absolute;
+  inset: -30% -10%;
+  background: conic-gradient(
+    from 210deg at 70% 20%,
+    transparent 0deg,
+    color-mix(in srgb, var(--accent-primary) 8%, transparent) 40deg,
+    transparent 90deg,
+    transparent 360deg
+  );
+  filter: blur(30px);
+  opacity: 0.6;
+}
+
+/* ---------- Faint framing rails at the content edges ---------- */
+.backdrop-rails::before,
+.backdrop-rails::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border-color) 12%, var(--border-color) 88%, transparent);
+}
+
+.backdrop-rails::before { left: var(--edge-inset); }
+.backdrop-rails::after  { right: var(--edge-inset); }
+
+/* ---------- Fine film grain for texture ---------- */
+.backdrop-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Light theme: dial the glow way down ---------- */
+html.light .backdrop-orb {
+  mix-blend-mode: normal;
+  filter: blur(95px);
+  opacity: 0.22;
+}
+
+html.light .backdrop-rays {
+  opacity: 0.35;
+}
+
+html.light .backdrop-grain {
+  opacity: 0.03;
+}
+
+/* ---------- Respect reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .backdrop-orb {
+    animation: none !important;
+  }
+}

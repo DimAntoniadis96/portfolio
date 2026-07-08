@@ -1,4 +1,5 @@
 import { useTheme } from './hooks/useTheme';
+import Backdrop from './components/Backdrop';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -15,6 +16,7 @@ export default function App() {
 
   return (
     <>
+      <Backdrop />
       <Navbar theme={theme} toggleTheme={toggleTheme} />
       <main>
         <Hero />
