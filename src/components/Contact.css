@@ -85,8 +85,9 @@ a.contact-info-card {
 }
 
 a.contact-info-card:hover {
-  border-color: var(--accent-primary);
-  box-shadow: var(--shadow-card);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-card),
+    0 18px 40px -22px color-mix(in srgb, var(--accent-primary) 42%, transparent);
   transform: translateY(-2px);
   background: color-mix(in srgb, var(--bg-card) 94%, transparent);
 }
