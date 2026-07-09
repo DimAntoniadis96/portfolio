@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './Hero.css';
-import { ArrowRightIcon, CvIcon, GitHubIcon, LinkedInIcon, MailIcon } from './SiteIcons';
+import { ArrowRightIcon, PdfFileIcon, GitHubIcon, LinkedInIcon, MailIcon } from './SiteIcons';
 import ShaderBackground from './ui/ShaderBackground';
 
 export default function Hero() {
@@ -80,7 +80,7 @@ export default function Hero() {
 
                 <div className="back">
                   <a href="/Dimitrios_Antoniadis_CV.pdf" className="cv-download-content" download="Dimitrios_Antoniadis_CV.pdf">
-                    <CvIcon size={56} />
+                    <PdfFileIcon size={48} />
                     <span>Download my CV</span>
                   </a>
                 </div>
