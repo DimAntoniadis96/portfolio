@@ -15,13 +15,13 @@ const EXPERIENCES = [
     summary: 'Built and shipped a production platform serving 40,000+ users across web, desktop, and Discord. Led all frontend development — from responsive UIs and real-time collaboration to gamification, analytics, and feature rollouts.',
   },
   {
-    title: 'Customer Service Representative',
-    company: 'CQS – Public Power Corporation',
+    title: 'Digital Support Specialist',
+    company: 'CQS – Public Power Corporation Project',
     period: 'Apr 2026 – Present',
     location: 'Remote',
     type: 'current',
-    tags: ['CRM', 'Communication'],
-    summary: 'Providing inbound customer service and support, managing customer data in CRM systems for one of Greece\'s largest utilities.',
+    tags: ['CRM', 'Ticketing', 'Customer Support'],
+    summary: 'Provide customer support for digital services on behalf of DEI / Public Power Corporation — assisting with access issues, account recovery, coupons and voucher redemption. Handle customer tickets, make outbound calls when needed, and record case updates accurately in the company\'s CRM/ticketing system.',
   },
   {
     title: 'Data Quality Control Specialist',
