@@ -35,6 +35,7 @@ export default function Skills() {
   const { ref, isVisible } = useFadeIn();
   const [hoveredCard, setHoveredCard] = useState(null);
   const [animatedCards, setAnimatedCards] = useState([]);
+  const [highlight, setHighlight] = useState({ x: 0, y: 0, w: 0, h: 0, visible: false });
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
 
@@ -43,6 +44,24 @@ export default function Skills() {
     const rect = gridRef.current.getBoundingClientRect();
     gridRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
     gridRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  };
+
+  // Aceternity-style hover highlight that slides behind the hovered card
+  const handleCardEnter = (e, index) => {
+    setHoveredCard(index);
+    const el = e.currentTarget;
+    setHighlight({
+      x: el.offsetLeft,
+      y: el.offsetTop,
+      w: el.offsetWidth,
+      h: el.offsetHeight,
+      visible: true,
+    });
+  };
+
+  const handleGridLeave = () => {
+    setHoveredCard(null);
+    setHighlight((prev) => ({ ...prev, visible: false }));
   };
 
   // Staggered card entrance animation
@@ -93,11 +112,21 @@ export default function Skills() {
             </div>
           </div>
 
-          <div 
-            className="skills-grid" 
+          <div
+            className="skills-grid"
             ref={gridRef}
             onMouseMove={handleMouseMove}
+            onMouseLeave={handleGridLeave}
           >
+            <span
+              className={`skills-card-highlight ${highlight.visible ? 'is-visible' : ''}`}
+              aria-hidden="true"
+              style={{
+                transform: `translate(${highlight.x}px, ${highlight.y}px)`,
+                width: highlight.w,
+                height: highlight.h,
+              }}
+            />
             {SKILL_CATEGORIES.map((cat, index) => (
               <article
                 className={[
@@ -106,8 +135,7 @@ export default function Skills() {
                   animatedCards.includes(index) ? 'skill-card--visible' : '',
                 ].filter(Boolean).join(' ')}
                 key={cat.title}
-                onMouseEnter={() => setHoveredCard(index)}
-                onMouseLeave={() => setHoveredCard(null)}
+                onMouseEnter={(e) => handleCardEnter(e, index)}
               >
                 <div className="skill-card-header">
                   <div className="skill-card-icon">

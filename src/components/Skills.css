@@ -115,6 +115,35 @@
   opacity: 1;
 }
 
+/* Aceternity-style highlight that slides behind the hovered card */
+.skills-card-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent-primary) 16%, transparent);
+  box-shadow: 0 20px 55px -20px color-mix(in srgb, var(--accent-primary) 60%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, width, height;
+  transition:
+    transform 0.36s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.36s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.36s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease;
+}
+
+.skills-card-highlight.is-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skills-card-highlight {
+    transition: opacity 0.3s ease;
+  }
+}
+
 .skill-card {
   position: relative;
   display: flex;
