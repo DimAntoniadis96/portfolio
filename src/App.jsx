@@ -1,4 +1,5 @@
 import { useTheme } from './hooks/useTheme';
+import { useOpticalHeadings } from './hooks/useOpticalHeadings';
 import Backdrop from './components/Backdrop';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -13,6 +14,7 @@ import Footer from './components/Footer';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
+  useOpticalHeadings();
 
   return (
     <>

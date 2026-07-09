@@ -26,6 +26,9 @@
   --container-padding: 0 var(--container-gutter);
   /* Keeps section corner marks + navbar aligned to the content column on wide screens */
   --edge-inset: max(var(--container-gutter), calc((100% - var(--container-width)) / 2 + var(--container-gutter)));
+  /* Vertical framing rails: sit OUTSIDE the widest section column (Experience = 1320px)
+     plus breathing room, so they never cross section content at any viewport width. */
+  --rail-inset: max(12px, calc((100% - 1360px) / 2));
 
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);

@@ -11,8 +11,9 @@
 }
 
 .experience .container {
-  max-width: 1320px;
-  padding-inline: clamp(16px, 3vw, 48px);
+  /* Match the base content column (1200px) so this section lines up with the
+     others instead of poking wider to the left/right. */
+  max-width: var(--container-width);
 }
 
 .experience-header {

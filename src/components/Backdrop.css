@@ -93,8 +93,8 @@
   background: linear-gradient(180deg, transparent, var(--border-color) 12%, var(--border-color) 88%, transparent);
 }
 
-.backdrop-rails::before { left: var(--edge-inset); }
-.backdrop-rails::after  { right: var(--edge-inset); }
+.backdrop-rails::before { left: var(--rail-inset); }
+.backdrop-rails::after  { right: var(--rail-inset); }
 
 /* ---------- Fine film grain for texture ---------- */
 .backdrop-grain {
