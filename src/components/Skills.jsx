@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Skills.css';
 import { CodeBlockIcon, DataStackIcon, ServiceBoxIcon, ToolMarkIcon } from './SiteIcons';
+import HeaderSparkles from './ui/HeaderSparkles';
 
 const SKILL_CATEGORIES = [
   {
@@ -67,9 +68,12 @@ export default function Skills() {
           <div className="skills-header">
             <div>
               <span className="section-label">Tech stack</span>
-              <h2 className="section-heading">
-                Technologies <span>I Work With</span>
-              </h2>
+              <div className="section-heading-block">
+                <h2 className="section-heading">
+                  Technologies <span>I Work With</span>
+                </h2>
+                <HeaderSparkles />
+              </div>
             </div>
             <div className="skills-header-right">
               <p className="skills-description">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Experience.css';
 import { ArrowLeftIcon, ArrowRightIcon, ExternalArrowIcon } from './SiteIcons';
+import HeaderSparkles from './ui/HeaderSparkles';
 
 const EXPERIENCES = [
   {
@@ -89,7 +90,10 @@ export default function Experience() {
         <div ref={ref} className={`fade-in ${isVisible ? 'visible' : ''}`}>
           <div className="experience-header">
             <span className="section-label">Experience</span>
-            <h2 className="section-heading">Where I've Worked</h2>
+            <div className="section-heading-block">
+              <h2 className="section-heading">Where I've Worked</h2>
+              <HeaderSparkles />
+            </div>
           </div>
 
           <div className="experience-tabs">

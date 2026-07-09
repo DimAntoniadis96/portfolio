@@ -1,5 +1,6 @@
 import { useFadeIn } from '../hooks/useFadeIn';
 import './About.css';
+import HeaderSparkles from './ui/HeaderSparkles';
 
 export default function About() {
   const { ref, isVisible } = useFadeIn();
@@ -10,7 +11,10 @@ export default function About() {
         <div ref={ref} className={`about-content fade-in ${isVisible ? 'visible' : ''}`}>
           <div className="about-header">
             <span className="section-label">About</span>
-            <h2 className="section-heading">A Bit About Me</h2>
+            <div className="section-heading-block">
+              <h2 className="section-heading">A Bit About Me</h2>
+              <HeaderSparkles />
+            </div>
           </div>
 
           <div className="about-grid">

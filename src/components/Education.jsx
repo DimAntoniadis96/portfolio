@@ -1,6 +1,7 @@
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Education.css';
 import { CalendarIcon, PinIcon } from './SiteIcons';
+import HeaderSparkles from './ui/HeaderSparkles';
 
 const EDUCATION = [
   {
@@ -36,7 +37,10 @@ export default function Education() {
             {/* Left column: Education */}
             <div className="edu-col">
               <span className="section-label">Education</span>
-              <h2 className="section-heading">Education</h2>
+              <div className="section-heading-block">
+                <h2 className="section-heading">Education</h2>
+                <HeaderSparkles />
+              </div>
 
               <div className="edu-cards">
                 {EDUCATION.map((edu) => (
@@ -76,7 +80,10 @@ export default function Education() {
             {/* Right column: Languages */}
             <div className="lang-col">
               <span className="section-label">Languages</span>
-              <h2 className="section-heading">Languages</h2>
+              <div className="section-heading-block">
+                <h2 className="section-heading">Languages</h2>
+                <HeaderSparkles />
+              </div>
 
               <div className="lang-cards">
                 {LANGUAGES.map((lang) => (

@@ -1,6 +1,7 @@
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Contact.css';
 import { ArrowRightIcon, ExternalArrowIcon, GitHubIcon, LinkedInIcon, MailIcon, PhoneIcon, PinIcon } from './SiteIcons';
+import HeaderSparkles from './ui/HeaderSparkles';
 
 const CONTACT_LINKS = [
   {
@@ -47,10 +48,18 @@ export default function Contact() {
             {/* Left: Headline + CTA */}
             <div className="contact-left">
               <span className="section-label">Contact</span>
-              <h2 className="contact-heading">Let's Build<br />Something <span className="heading-accent">Together</span></h2>
+              <div className="section-heading-block">
+                <h2 className="contact-heading">Let's Build<br />Something <span className="heading-accent">Together</span></h2>
+                <HeaderSparkles />
+              </div>
+              <span className="contact-availability">
+                <span className="contact-availability-dot" />
+                Available for new projects
+              </span>
               <p className="contact-text">
                 I'm always open to new opportunities, collaborations, or just a
-                friendly conversation about tech. Feel free to reach out.
+                friendly conversation about tech. Feel free to reach out — I
+                usually reply within a day.
               </p>
               <div className="contact-actions">
                 <a href="mailto:dim.antoniadis.dev@gmail.com" className="btn btn-primary">

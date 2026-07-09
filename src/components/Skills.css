@@ -21,6 +21,7 @@
 }
 
 .skills-header .section-heading span {
+  display: block;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   background-clip: text;

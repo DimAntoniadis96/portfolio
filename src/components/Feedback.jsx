@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Feedback.css';
+import HeaderSparkles from './ui/HeaderSparkles';
 
 const STORAGE_KEY = 'portfolio-guestbook-notes-v1';
 const AUTHOR_ID_STORAGE_KEY = 'portfolio-guestbook-author-id-v1';
@@ -704,7 +705,10 @@ export default function Feedback() {
           <div className="feedback-header">
             <div>
               <span className="section-label">Feedback</span>
-              <h2 className="section-heading">Project Notes</h2>
+              <div className="section-heading-block">
+                <h2 className="section-heading">Project Notes</h2>
+                <HeaderSparkles />
+              </div>
             </div>
             <p className="feedback-text">
               Leave a short note about my work, a collaboration idea, or an improvement I should consider.

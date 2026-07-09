@@ -1,6 +1,7 @@
 import { useFadeIn } from '../hooks/useFadeIn';
 import './Work.css';
 import InteractiveSelector from './ui/interactive-selector';
+import HeaderSparkles from './ui/HeaderSparkles';
 import { AcademyIcon, GameIcon, HospitalityIcon, StudySagaIcon } from './SiteIcons';
 
 const PROJECTS = [
@@ -106,7 +107,10 @@ export default function Work() {
           <div className="work-header">
             <div>
               <span className="section-label">Work</span>
-              <h2 className="section-heading">What I've Built</h2>
+              <div className="section-heading-block">
+                <h2 className="section-heading">What I've Built</h2>
+                <HeaderSparkles />
+              </div>
             </div>
             <p>Selected products and client websites I've designed, built, and shipped.</p>
           </div>
