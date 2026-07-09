@@ -21,6 +21,12 @@
   margin-top: 18px;
   pointer-events: none;
   isolation: isolate;
+  /* main line color: white on dark, near-black on light */
+  --sparkle-line-color: #ffffff;
+}
+
+html.light .header-sparkles {
+  --sparkle-line-color: #0c1218;
 }
 
 /* ---- gradient guide line (anchored to the top edge) ---- */
@@ -39,9 +45,8 @@
   background: linear-gradient(
     to right,
     transparent 0%,
-    #6366f1 14%,
-    #818cf8 50%,
-    #6366f1 86%,
+    var(--sparkle-line-color) 15%,
+    var(--sparkle-line-color) 85%,
     transparent 100%
   );
 }
