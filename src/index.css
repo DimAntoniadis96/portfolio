@@ -45,12 +45,12 @@
 
 /* ---------- Dark Theme (default) — true black + light blue ---------- */
 html.dark {
-  --bg-primary: #060708;
-  --bg-secondary: #0d1013;
-  --bg-tertiary: #151a1f;
-  --bg-card: rgba(16, 20, 25, 0.72);
-  --bg-card-hover: rgba(22, 27, 33, 0.9);
-  --bg-nav: rgba(6, 7, 8, 0.72);
+  --bg-primary: #000000;
+  --bg-secondary: #060809;
+  --bg-tertiary: #0d1013;
+  --bg-card: rgba(10, 13, 17, 0.72);
+  --bg-card-hover: rgba(16, 20, 25, 0.9);
+  --bg-nav: rgba(0, 0, 0, 0.72);
 
   --text-primary: #e4e9ef;
   --text-secondary: #9aa4b0;

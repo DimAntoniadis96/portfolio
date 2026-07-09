@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './Hero.css';
 import { ArrowRightIcon, CvIcon, GitHubIcon, LinkedInIcon, MailIcon } from './SiteIcons';
+import ShaderBackground from './ui/ShaderBackground';
 
 export default function Hero() {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -11,6 +12,8 @@ export default function Hero() {
 
   return (
     <section className="hero section" id="hero">
+      <ShaderBackground />
+      <div className="hero-scrim" />
       <div className="container">
         <div className="hero-content">
           <div className="hero-text">
