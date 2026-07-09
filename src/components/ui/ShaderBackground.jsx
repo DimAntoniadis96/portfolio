@@ -24,6 +24,11 @@ const fsSource = `
   precision highp float;
   uniform vec2 iResolution;
   uniform float iTime;
+  /* Theme-driven colours (set from JS based on light/dark mode). */
+  uniform vec4 uBgColor1;
+  uniform vec4 uBgColor2;
+  uniform vec4 uLineColor;
+  uniform float uLight; // 1.0 in light mode, 0.0 in dark mode
 
   const float overallSpeed = 0.2;
   const float gridSmoothWidth = 0.015;
@@ -34,8 +39,6 @@ const fsSource = `
   const float minorLineFrequency = 1.0;
   const vec4 gridColor = vec4(0.5);
   const float scale = 5.0;
-  /* Baby blue lines */
-  const vec4 lineColor = vec4(0.45, 0.78, 0.95, 1.0);
   const float minLineWidth = 0.01;
   const float maxLineWidth = 0.2;
   const float lineSpeed = 1.0 * overallSpeed;
@@ -86,9 +89,6 @@ const fsSource = `
     space.x += random(space.y * warpFrequency + iTime * warpSpeed + 2.0) * warpAmplitude * horizontalFade;
 
     vec4 lines = vec4(0.0);
-    /* Black background with a faint blue lift on one side */
-    vec4 bgColor1 = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 bgColor2 = vec4(0.02, 0.06, 0.10, 1.0);
 
     for(int l = 0; l < linesPerGroup; l++) {
       float normalizedLineIndex = float(l) / float(linesPerGroup);
@@ -105,13 +105,24 @@ const fsSource = `
       float circle = drawCircle(circlePosition, 0.01, space) * 4.0;
 
       line = line + circle;
-      lines += line * lineColor * rand;
+      lines += line * uLineColor * rand;
     }
 
-    fragColor = mix(bgColor1, bgColor2, uv.x);
-    fragColor *= verticalFade;
-    fragColor.a = 1.0;
-    fragColor += lines;
+    vec4 base = mix(uBgColor1, uBgColor2, uv.x);
+
+    if (uLight > 0.5) {
+      /* Light mode: blend the light background TOWARD the line colour where
+         lines are strong, so blue lines read on a light background (additive
+         blending would just wash out to white). */
+      float li = clamp((lines.r + lines.g + lines.b) * 0.5, 0.0, 1.0);
+      fragColor = mix(base, uLineColor, li);
+      fragColor.a = 1.0;
+    } else {
+      /* Dark mode: original additive glow over a dark, vignetted background. */
+      base *= verticalFade;
+      base.a = 1.0;
+      fragColor = base + lines;
+    }
 
     gl_FragColor = fragColor;
   }
@@ -170,6 +181,32 @@ export default function ShaderBackground({ className = '' }) {
     const vertexPosition = gl.getAttribLocation(program, 'aVertexPosition');
     const uResolution = gl.getUniformLocation(program, 'iResolution');
     const uTime = gl.getUniformLocation(program, 'iTime');
+    const uBgColor1 = gl.getUniformLocation(program, 'uBgColor1');
+    const uBgColor2 = gl.getUniformLocation(program, 'uBgColor2');
+    const uLineColor = gl.getUniformLocation(program, 'uLineColor');
+    const uLight = gl.getUniformLocation(program, 'uLight');
+
+    // Colour palettes per theme. Dark = black + baby blue (additive glow);
+    // light = pale background + a readable blue that blends over it.
+    const PALETTES = {
+      dark: {
+        bg1: [0.0, 0.0, 0.0, 1.0],
+        bg2: [0.02, 0.06, 0.10, 1.0],
+        line: [0.45, 0.78, 0.95, 1.0],
+        light: 0,
+      },
+      light: {
+        bg1: [0.93, 0.95, 0.97, 1.0],
+        bg2: [0.82, 0.89, 0.95, 1.0],
+        line: [0.13, 0.55, 0.78, 1.0],
+        light: 1,
+      },
+    };
+    // Read the active palette straight from the <html> theme class every frame.
+    // Cheap, and immune to effect/observer timing (StrictMode double-mounts,
+    // child-before-parent effect order, etc.).
+    const currentPalette = () =>
+      document.documentElement.classList.contains('light') ? PALETTES.light : PALETTES.dark;
 
     // Perf: this fragment shader is expensive per pixel, so render into a
     // low-resolution buffer and let the browser upscale it. The plasma is soft,
@@ -198,9 +235,14 @@ export default function ShaderBackground({ className = '' }) {
     let time = 0;
 
     const renderFrame = () => {
+      const palette = currentPalette();
       gl.useProgram(program);
       gl.uniform2f(uResolution, canvas.width, canvas.height);
       gl.uniform1f(uTime, time);
+      gl.uniform4fv(uBgColor1, palette.bg1);
+      gl.uniform4fv(uBgColor2, palette.bg2);
+      gl.uniform4fv(uLineColor, palette.line);
+      gl.uniform1f(uLight, palette.light);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       gl.vertexAttribPointer(vertexPosition, 2, gl.FLOAT, false, 0, 0);
